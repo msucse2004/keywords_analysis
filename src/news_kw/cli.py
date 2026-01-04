@@ -1,8 +1,36 @@
 """Command-line interface for the pipeline."""
 
 import argparse
+import os
+import sys
+import warnings
 from pathlib import Path
 from news_kw.pipeline import run_pipeline
+
+
+def check_conda_environment():
+    """Check if running in conda environment and warn if not."""
+    conda_env = os.environ.get('CONDA_DEFAULT_ENV')
+    conda_prefix = os.environ.get('CONDA_PREFIX')
+    
+    # Check if we're in the expected conda environment
+    expected_env = 'keyword-analysis'
+    
+    if not conda_env and not conda_prefix:
+        warnings.warn(
+            f"Warning: Not running in conda environment. "
+            f"Expected environment: '{expected_env}'. "
+            f"Please use 'conda run -n {expected_env} python -m news_kw.cli' "
+            f"or use the provided run scripts (run_pipeline.bat or run_pipeline.ps1).",
+            UserWarning
+        )
+    elif conda_env != expected_env:
+        warnings.warn(
+            f"Warning: Running in conda environment '{conda_env}' but expected '{expected_env}'. "
+            f"Please use 'conda run -n {expected_env} python -m news_kw.cli' "
+            f"or use the provided run scripts (run_pipeline.bat or run_pipeline.ps1).",
+            UserWarning
+        )
 
 
 def main():
@@ -21,8 +49,8 @@ def main():
     parser.add_argument(
         '--input_dir',
         type=Path,
-        default=Path('data/raw_txt'),
-        help='Directory containing TXT and PDF files (default: data/raw_txt)'
+        default=Path('data/filtered_data'),
+        help='Directory containing TXT and PDF files (default: data/filtered_data)'
     )
     
     parser.add_argument(
@@ -67,7 +95,27 @@ def main():
         help='Skip R publication-quality figures'
     )
     
+    parser.add_argument(
+        '--filter',
+        action='store_true',
+        help='Filter files by date parsing before running pipeline'
+    )
+    
     args = parser.parse_args()
+    
+    # Check conda environment
+    check_conda_environment()
+    
+    # If --filter is specified, run filtering first
+    if args.filter:
+        from news_kw.filter_files import filter_and_copy_files
+        print("Filtering files by date parsing...")
+        filter_and_copy_files(
+            raw_txt_dir=Path('data/raw_txt'),
+            filtered_data_dir=Path('data/filtered_data'),
+            config_path=args.config
+        )
+        print("File filtering completed. Proceeding with pipeline...\n")
     
     # Validate paths
     if not args.config.exists():

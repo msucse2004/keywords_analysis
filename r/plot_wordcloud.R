@@ -8,8 +8,13 @@ library(viridis)
 library(dplyr)
 source("r/common_theme.R")
 
+# Get paths from environment variables (set by Python) or use defaults
+tables_dir <- Sys.getenv("R_TABLES_DIR", "output/tables")
+figures_dir <- Sys.getenv("R_FIGURES_DIR", "output/figures")
+project_root <- Sys.getenv("R_PROJECT_ROOT", ".")
+
 # Read configuration
-config_file <- "config/default.yaml"
+config_file <- file.path(project_root, "config/default.yaml")
 if (file.exists(config_file)) {
   config <- read_yaml(config_file)
   wordcloud_top_n <- config$WORDCLOUD_TOP_N
@@ -27,7 +32,7 @@ if (file.exists(config_file)) {
 
 # Load exclude keywords (same as Python)
 exclude_keywords <- character(0)
-exclude_file <- "data/exclude/keywords.txt"
+exclude_file <- file.path(project_root, "data/exclude/keywords.txt")
 if (file.exists(exclude_file)) {
   exclude_content <- readLines(exclude_file, warn = FALSE)
   if (length(exclude_content) > 0 && nchar(trimws(exclude_content[1])) > 0) {
@@ -38,7 +43,7 @@ if (file.exists(exclude_file)) {
 }
 
 # Read data
-keywords <- read.csv("output/tables/keyword_topk.csv", stringsAsFactors = FALSE)
+keywords <- read.csv(file.path(tables_dir, "keyword_topk.csv"), stringsAsFactors = FALSE)
 
 # Filter out excluded keywords (case-insensitive, same as Python)
 if (length(exclude_keywords) > 0) {
@@ -54,10 +59,10 @@ freq_vec <- keywords$freq
 names(freq_vec) <- keywords$token
 
 # Create output directory
-dir.create("output/figures", showWarnings = FALSE, recursive = TRUE)
+dir.create(figures_dir, showWarnings = FALSE, recursive = TRUE)
 
 # Generate word cloud - PNG
-png("output/figures/fig_wordcloud.png", 
+png(file.path(figures_dir, "fig_wordcloud.png"), 
     width = wordcloud_width, 
     height = wordcloud_height,
     units = "px",
@@ -75,7 +80,7 @@ wordcloud(words = names(freq_vec),
 dev.off()
 
 # Generate word cloud - PDF
-pdf("output/figures/fig_wordcloud.pdf", 
+pdf(file.path(figures_dir, "fig_wordcloud.pdf"), 
     width = wordcloud_width / 100, 
     height = wordcloud_height / 100,
     bg = wordcloud_background)
@@ -90,5 +95,5 @@ wordcloud(words = names(freq_vec),
 
 dev.off()
 
-cat("Word cloud figure saved to output/figures/\n")
+cat(paste("Word cloud figure saved to", figures_dir, "\n"))
 

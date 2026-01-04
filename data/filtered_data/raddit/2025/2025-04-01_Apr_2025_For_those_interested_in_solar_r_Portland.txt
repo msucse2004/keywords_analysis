@@ -1,0 +1,444 @@
+11/23/25, 3:27 PM For those interested in solar : r/Portland
+Skip to main content
+r/Portland Search in r/Portland Create
+r/Portland•4mo ago
+brrent
+For those interested in solar
+Discussion
+Hey all, I just got a 12.42 kw system installed in Portland, Oregon and thought I’d share my experience in case it might be helpful.
+👷Finding an installer There are a lot of crummy installers out there with slimy salesman that use shady tactics to get you to sign on. I probably spoke with 6 installers and
+only got good vibes from two of them. I highly recommend talking to people who had solar installed in your area, working with local companies, and NOT going with
+companies like Ion.
+I ended up going with SunPath and had an outstanding experience from start to finish. Another company I really liked was National Solar out of Bend. The only reason I
+passed on them was because their panel sizes didn’t quite cover my roof as efficiently.
+💸Cost My total out of pocket cost was $30,925. That does not include the 30% tax rebate I’ll receive next year. After that plus the PGE rebate the total cost was ~$20K.
+If you don’t need a new roof but are only a few years into the life of yours, I would seriously consider a new roof and factoring that cost into the payback. A roof lasts 30 years
+and panels last 30 years, so it’s good to have them in sync.
+🌞Panels/inverters 460W REC Alpha Pure RX Enphase IQ8X micro inverters
+Don’t go with any installer that doesn’t use Enphase micro inverters. A micro inverter makes each panel operate independently from the array. Without them, if one panel is
+shaded, the whole array is impacted.
+It sounds like there are a few panel companies that are good, but from my research REC seemed like one of the best, and the installer I liked best used them.
+⏰Timeline I was adding a dormer to my house so they couldn’t install until that was framed and roofed but I just kept in touch with them as construction progressed. Once I
+had a date we could 100% confirm, they got me on the schedule 2 weeks later. Panels took a day to put up. City inspection happened one week later, and my local utility (PGE)
+did the meter swap a week after that and I was officially sending power to the grid.
+📊Consumption/Production I use about 7,000 kWh annually. It’s a 1920s home with poor insulation but I don’t blast the central air, and I try to utilize cool air at night to bring
+temps down. I also keep the house on the cooler side during the winter. I can’t speak to long term production but this system should produce 173% of my current usage. I
+sized up quite a bit because I plan to get an EV and heat pump in the future. And I figure maybe until then I can supplement my gas furnace with electric space heaters and
+reduce my gas bill that way.
+My system was connected to the grind at 9am on July 23, and I produced 67.7 kWh. The second day, which was technically my first fully day, I got 70.1 kWh. My panels are on
+the east and west facing sides of my roof, and my west facing roof does have some trees that block the early morning sun.
+🤑Payback A lot of companies will assume crazy electricity price hikes, and they say it’s based on historical data. But just because rates have gone up 10% the last year doesn’t
+mean that’ll keep happening. It could! But I think it’s better to look at something like a 30 year average.
+I’m assuming 4-5% annual increases, and the companies that felt the most honest also used those figures for their payback period. On that assumption, payback is ~10 years.
+But I wanted to bring up something I think a lot of people miss on the finances of solar. I think it’s only fair you compare the cost of the system to investing that cost into the
+market — if you have $20k, I think most people would agree that if it’s not being spent it should be in the market growing at ~6%.
+https://www.reddit.com/r/Portland/comments/1m9ehwq/for_those_interested_in_solar/ 1/11
+11/23/25, 3:27 PM For those interested in solar : r/Portland
+If you put $20K into a solar system and that covers your needs (very realistic expectation) you now have what would’ve been your electric bill to put in the market — let’s
+Skip to main content
+assume $125/month. This doesn't even factor in if you have a heat pump and are getting rid of your gas bill. This is money you can now invest in the maCrrkeeat.te
+Assume a 4% annual increase on electricity cost (it's been closer to 10% lately) and in 9 years as long as you're DCAing what would've been your electric bill into the market,
+you have $19,962. If you’d invested in the market instead, your $20K investment is now $33,789K. Sounds like the market is still winning -- but wait! If you invested in the
+market instead of solar you’ve been paying electricity this whole time. At $125/month plus 4% increases every year that's $15,874. Take that away from your ~$33K and you're
+left with $17,915. Solar is winning.
+It only gets better from there. At 20 years, your investment in the market is worth $19,475 (after you subtract your electricity cost of $44,667). DCAing your electricity savings in
+the same market (6% assumed growth) puts you at $50,770.
+In the long run, solar can be very lucrative financially.
+🐿Squirrel Guard I see a lot of systems without a squirrel guard, but I decided to go for it. I have squirrels on my roof and didn’t want to take the risk. My installer said one big
+benefit is they have to use a concealed rack system, which just means the racking doesn’t stick out past the panels. I’ve seen some systems where the racking sticks out a
+couple feet. It doesn’t look bad, but it’s definitely not as clean. I’ll admit the system definitely looked cleaner before the squirrel guard, but I’m hoping it’s worth the protection.
+I hope this is helpful for anyone considering solar. So far I’m super happy with the system and it feels great knowing I’m silently generating electricity to cover my needs and
+then some.
+509 126 Share
+TradeStation • Official • Promoted
+A match made in futures heaven: Combine 600+ CME Group futures contracts, including popular choices like S&P 500 E-mini (ES), Crude Oil (CL), & Gold
+(GC) — with our lower margin rates to gain additional market exposure using less capital.
+Sign Up tradestation.com
+Join the conversation
+Sort by: Best Search Comments
+Other_Cricket_453 •4mo ago
+Thanks for the write up. I have been considering solar for a while and can't really justify it with the cost. Also it seems most solar panels face south, while my house is
+east/west facing with skylights taking up a lot of the real estate.
+98 Reply
+g1_jb •4mo ago
+Tigard
+Estimates are free and they usually have a decent rationale for what you will get with your roof. If you’re interested ask an expert, we went with A+R Solar which is a
+local, employee owned b corp
+20 Reply
+brrent OP•4mo ago
+Definitely contact a solar rep if you’re interested. They can generate predicted production very quickly. You can also use Project Sunroof.
+East/west isn’t necessarily bad. I have east/west and two skylights FWIW.
+10 Reply
+StrongOnline007 •4mo ago
+Good post and I had a great experience getting a quote with Sun Path even though I didn’t go for it.
+Are you planning on being in your house for 20+ years? I want solar really bad but to me the economics here in Portland with our dark winters (and at my house which
+also has an east/west roof) don’t totally make sense.
+39 Reply
+brrent OP•4mo ago
+Yes I do. Based on my calculations though I should break even after ~10 years. We’ll see what electricity rates do though.
+I definitely wouldn’t go for it if I didn’t think this was a long term home.
+27 Reply
+wolfwind730 •4mo ago
+https://www.reddit.com/r/Portland/comments/1m9ehwq/for_those_interested_in_solar/ 2/11
+11/23/25, 3:27 PM For those interested in solar : r/Portland
+Piedmont
+Skip to main content
+Create
+I plan on moving at some point in the next few years, would it increase the home value equivalent to the investment cost?
+6 Reply
+brrent OP•4mo ago
+That’s a tough. People claim it raises the house value — I think I’ve seen 4% or something. But you never know. I don’t think I would bank on it.
+13 Reply
+1 more reply
+Mean_Background7789 •4mo ago
+1 more reply
+vreeslewe •4mo ago
+Curled inside a pothole
+I don’t have a house or $20k, but I read the whole thing and I appreciate the info.
+34 Reply
+t0mserv0 •4mo ago
+Lol same
+12 Reply
+t-freeze •4mo ago
+Congrats on going solar! Wild you posted this today, since SunPath just finished installing my 10.12kW system this afternoon! I also got several quotes for my system,
+and even though their quote was the for the smallest system overall, they had several opportunities to upsell me and neglected to do so given the setup of my roof when
+everyone else was happy to quote impractical/low producing panels just to try to hit 100% energy offset. Also, they were far and away the best to work with out of
+everyone I talked to. +1 for the rec!
+21 Reply
+pklym •4mo ago
+what is your price per kw?
+1 Reply
+1 more reply
+u/landgate • Promoted
+WY is a primary route for long-haul fiber optics, with connections to major markets on coast.
+Learn More landgate.com
+nappingbat •4mo ago
+Nice post. And that sounds like a pretty good price, too (I paid a bit less for a 7.74kw system). How many panels did you end up installing?
+14 Reply
+brrent OP•4mo ago
+27x 460W panels.
+10 Reply
+AdvancedInstruction •4mo ago
+Lloyd District Top 1% Commenter
+That's a lot for a residence!
+3 Reply
+brrent OP•4mo ago
+It is right now. But when we eventually replace our gas furnace with heat pumps it’ll just barely cover all our needs.
+9 Reply
+https://www.reddit.com/r/Portland/comments/1m9ehwq/for_those_interested_in_solar/ 3/11
+11/23/25, 3:27 PM For those interested in solar : r/Portland
+macallen •4mo ago
+Skip to main content
+Create
+I have near 10k on my roof from Blue Raven and I absolutely don't recommend them. Their customer service is dreadful, they took almost an entire year to get my panels
+on and activated, the entire summer. I engaged them in January, hoping for some summer months, and they turned them on in November, so my first 5 months were
+zip...but they had my money in January.
+12 Reply
+AdvancedInstruction •4mo ago
+Lloyd District Top 1% Commenter
+Former residential solar installer in Portland here.
+All of this advice is good. Getting 6 bids is correct, ignoring the sales pitch is correct, squirrel guards are indeed necessary, and make sure your system isn't oversized.
+But.
+In light of the Federal tax credit for residential solar disappearing, it may be best to wait a few years until the state legalized "plug and play" solar like Utah and Germany
+have, and install a smaller solar system on your balcony without an installation crew or interconnection agreement. It's so much freaking cheaper even if it won't zero out
+your bill.
+33 Reply
+novasilverpill •4mo ago
+These market forces and the “Moore’s law” effect keeps mentally from considering any serious capital outlay.
+Next gen dictates things get smaller, cheaper, and easier to install, and the technology landscape moves so quickly in this space. This is incidentally why I have
+difficulty spending more than $1500 on an ebike.
+3 Reply
+AdvancedInstruction •4mo ago
+Lloyd District Top 1% Commenter
+Which is why it's best to wait until plug and play happens.
+It's just so much cheaper that you aren't making a massive outlay.
+4 Reply
+shibboleth2005 •4mo ago
+CrowsInTheNose •4mo ago
+They have till the end of the year to get it installed and still get the tax credit.
+1 Reply
+u/Riffhaus • Promoted
+Mushrooms knit into a Cardigan?
+riffhaus.com Shop Now
+waltergeorge1 •4mo ago
+This is by far the best explanation on solar in portland. Every year I run the math and it never adds up for me. My break even point is around 12 years for size of roof and
+usage. But with the way the rate hikes are going, it might be a faster break even point.
+Once I need a new roof, the next thing going on it is solar.
+10 Reply
+Shadowpnw •2mo ago
+ROI is dependent on how what you pay for solar, available incentives, location in Oregon, shading, orientation, equipment, and utility company. National Solar was
+offering REC Alpha Pure-RX 470 watt panels at around $2.38 per watt. The Energy Trust of Oregon incentive is increasing to $2,500 for PGE customers in 2026. How
+long has SunPath been in business? A&R is also recommended.
+1 Reply
+jennifer79t •4mo ago
+I love my solar....2nd house that I've installed it on.... installers for my type of home are limited.... But here's the data on my production since it was turned on.
+https://www.reddit.com/r/Portland/comments/1m9ehwq/for_those_interested_in_solar/ 4/11
+11/23/25, 3:27 PM For those interested in solar : r/Portland
+Skip to main content
+Create
+9 Reply
+[deleted] •4mo ago
+I was going to say. OP is excited about his July production. Things are going to be different in November.
+4 Reply
+jennifer79t •4mo ago
+That's why we have met metering & systems are installed based on estimated annual production....
+With 20 panels I still generate more than I use during the annual cycle. System size was calculated & installed before I changed my old heat pump to a much
+more efficient system... which is why I end up with a good size donation at the end of the cycle.....
+3 Reply
+Fragrant-Region8258 •4mo ago
+Do you have net metering with PGE? If so, my understanding is that any credits you have saved at the end of the winter are taken away from you. So there’s not much of
+an advantage to overproduction.
+12 Reply
+stevozip •4mo ago
+It's Oregon law not PGE that is giving the unused credits to low income power customers.
+13 Reply
+brrent OP•4mo ago
+Right. At the end of March any extra credits get donated to low income households. It’s definitely not financially advantageous to overproduce — but I plan to grow
+into it in the next few years by switching to electric heat and likely getting an EV in the future. I figure I can also use some space heaters to decrease my natural gas
+bill some in the winter in the meantime.
+26 Reply
+Pizzledrip •4mo ago
+Supporting lower household power bills sounds pretty dope too. I hope that’s 💯 what they do with it.
+25 Reply
+stevozip •4mo ago
+It's an ORS (I don't remember the number) so it's not PGE just doing it.
+7 Reply
+Fragrant-Region8258 •4mo ago
+That makes sense
+3 Reply
+surferdude121 •4mo ago
+Can you explain why not to use Ion? I got my panels installed by them a couple years ago and had a really positive experience.
+https://www.reddit.com/r/Portland/comments/1m9ehwq/for_those_interested_in_solar/ 5/11
+11/23/25, 3:27 PM For those interested in solar : r/Portland
+Skip to m6ain contenRteply
+Create
+j7474505b •4mo ago
+Our Ion rep told us we could include our roof cost in the 30% solar tax credit which is absolutely not true. We did the research on that early and that became our
+"how honest is this outfit?" question. Their prices were also much higher for less and they really want to get you on a payment plan.
+Getting a system installed by Sunpath in the next month or so and feeling good about them for similar reasons as above. And National was also our runner up!
+10 Reply
+brrent OP•4mo ago
+Yep, this is the kind of stuff Ion pulls. So shady.
+6 Reply
+1 more reply
+AdvancedInstruction •4mo ago
+Lloyd District Top 1% Commenter
+we could include our roof cost in the 30% solar tax credit which is absolutely not true
+I've seen it happen before but it's not a guarantee.
+1 Reply
+12 more replies
+brrent OP•4mo ago
+They just had slimy sales tactics and were way more expensive. Also, at least from who I spoke with, they didn’t use micro inverters. What was your cost per watt
+before incentives?
+From my experience it was worse equipment, higher prices, and deceiving info.
+That being said, I’m glad you had a good experience! You have more experience with them than me and it’s good to hear your install worked out.
+8 Reply
+KentuckyFriedChris •4mo ago
+The payment plans.. if you want to early pay off they’re terrible loan terms and how they structure the loan/leases
+4 Reply
+g1_jb •4mo ago
+Tigard
+Our Ion quote was a lot more expensive than a local company but the loan rates were better. We paid cash so ion wasn’t even close to the best price. Seemed like
+they were making it up for the lower rate loan to get you a smaller, longer term payment.
+3 Reply
+CovertProphet84 •4mo ago
+Same here. I would like to see OPs reasoning behind that comment.
+2 Reply
+KentuckyFriedChris •4mo ago
+https://www.reddit.com/r/Portland/comments/1m9ehwq/for_those_interested_in_solar/ 6/11
+11/23/25, 3:27 PM For those interested in solar : r/Portland
+Skip to main content
+Create
+Another happy sunpather chiming in, in Hillsboro south facing and west facing 42 panels and just hit 1 year of power. Our setup should do about 102% of annual when
+all said and done.
+Most of the proper local companies are good.. ion/blue raven/freedom forever are terrible and so is their solar lease terms..
+Based on sunpath calcs, we’re a 6-year break even. Although we enjoy the 315 dollar smaller power bills in summer. Our last bill before the net metering was 335, now
+we’re paying 16 dollars unless we don’t have enough banked in the winter like late last year.
+For Oregon the first year will be not full net zero or even the full savings.. June or early July is best time to soak in the net metering daylight.
+5 Reply
+Dstln •4mo ago
+🐸 RIBBIT 🐸 Top 1% Commenter
+Yeah, sunpath has been great and national has been good too. Thanks for the post.
+4 Reply
+Whackaboom_Floyntner •4mo ago
+A few questions:
+▪Did you consider a battery storage system? Any thoughts on that?
+▪If you get an EV, will you look for one with a vehicle to grid feature? (Tho vehicle to load might be a good alternative?)
+▪Will you improve your home's insulation picture to add to the efficiency?
+3 Reply
+rabidsloth •4mo ago
+One thing to keep in mind. Sometimes the solar companies will try and short you on the micro inverters. What I mean is I got 400w panels but micro inverters that were
+only good for 300w. So they sold me a system that could only actually give me 75% of what they told me it would.
+7 Reply
+brrent OP•4mo ago
+Your panels will likely never actually hit 400W though. From my understanding, it’s actually ideal to slightly undersized the micro inverters. My panels are 460 and my
+inverters are 384. Not quite as much of a difference as yours, but I don’t think you’re getting as short changed as you think.
+3 Reply
+AndroidNumber137 •4mo ago
+Montavilla
+Perfect timing as my next door neighbors just got solar panels installed & I was going to ask who they went with.
+2 Reply
+https://www.reddit.com/r/Portland/comments/1m9ehwq/for_those_interested_in_solar/ 7/11
+11/23/25, 3:27 PM For those interested in solar : r/Portland
+sirrkitt •4mo ago
+Skip to main content
+Hazelwood Create
+Looks nice and clean!
+Thought about going with solar but our roof framing is old and the city wanted us to pay for an engineer to evaluate it. Our roof also isn't south facing and I didn't want
+to spend the extra money on having to compensate with extra panels.
+2 Reply
+brrent OP•4mo ago
+Yeah I think SunPath had an engineer out as part of the project to make sure my house was structurally viable. It was $1000 or so. I could be wrong, but I think in
+most instances all you’d really need is to sister the rafters. Mine were already sistered for some reason on the front dormer, and the back dormer was new and built to
+modern code so didn’t need an inspection.
+And thank you! I’m actually really liking the look of the panels on the front of the house — just a clean grid covering the dormer roof.
+1 Reply
+MrPdxTiger •4mo ago
+Appreciate the nice post!!! Happy Solar!!!
+2 Reply
+crowninggloryhole •4mo ago
+FWIW, my partner works in utility scale solar, and expects the price of electricity to double in the next decade. Also, this is the last year for any tax credits on residential
+solar. That’s going away, and may never come back.
+2 Reply
+brrent OP•4mo ago
+Yeah, I could see it increasing much more with the massive increase in energy demand, but still didn’t think it was fair to model payback on that.
+And yeah, solar equipment is the cheapest it’s ever been and the tax rebate makes it a no brainer in a lot of situations.
+1 Reply
+harmoniumlessons •4mo ago
+this is the quality posts i'm here for
+2 Reply
+Ginge_r_ale •4mo ago
+Great post and great addition of opportunity “in the market” cost consideration! Something that is rarely included in ROI calculations like this let alone shared with others
+for context.
+Maybe we should start a finance club haha
+2 Reply
+[deleted] •4mo ago
+Did you use AI to write this
+2 Reply
+brrent OP•4mo ago
+I didn’t. But I did borrow the emoji titles from what I’ve seen ChatGPT do.
+1 Reply
+kcl97 •4mo ago•Edited 4mo ago
+Projectrage •4mo ago
+Top 1% Commenter
+I would recommend get a buddy who is an electrician, and get roofers that know, load on a roof, and how to install panels properly.
+An 8kw 48v is good for most households. $5,518 https://sungoldpower.com/collections/all/products/off-grid-solar-kit-8000w-48vdc-120v-240v-lifepo4-10-24kwh-
+lithium-battery-8-x-415-watts-solar-panels-sgr-8k10e
+-2 Reply
+tas50 •4mo ago
+Grant Park
+https://www.reddit.com/r/Portland/comments/1m9ehwq/for_those_interested_in_solar/ 8/11
+11/23/25, 3:27 PM For those interested in solar : r/Portland
+Head on over to r/solar and check out all the butcher jobs done by electricians. I would not trust them to properly mount the panels nor would I trust a roofer to do
+Skip to main content
+Create
+that. Hire someone that actually knows what they're doing.
+9 Reply
+g1_jb •4mo ago
+Tigard
+Just get a bid from A+R Solar, there are local and know what they are doing
+3 Reply
+2 more replies
+bluesmudge •4mo ago
+The hard part in Portland is permitting. The city is notoriously strict with load calcs for solar installs. Unless you have a recent manufactured truss roof, you are likely
+going to have to hire an engineer and pay for the rafters to be reinforced because most older Portland construction will be over-spanned.
+I agree that almost any electrician can install solar panels once the paperwork is taken care of.
+2 Reply
+SarisweetieD •4mo ago
+Many of the solar companies do the engineering in-house, and the solar permit process was streamlined in Portland a year or two ago, so with the stamped
+engineering calcs (unless it’s ballasted or the panels and racking are over 4.5lbs/sf), it’s a very simple permit with no structural review.
+6 Reply
+1 more reply
+pdxamish •4mo ago
+Powellhurst-Gilbert
+Solar when financed is a pure rip off hard stop. We are not in a good area for solar and you should never take out a loan for them. You want to sell your house , good luck
+no one is going to take over a $30k solar contract at 5%
+-1 Reply
+brrent OP•4mo ago
+Yeah I didn’t look much into financing but I’ve heard they can be usurious, especially now with rates where they are.
+Portland definitely isn’t a bad place for solar though. Sure, there are sunnier places. But we have super long summer days and it’s sunny for all of them.
+You also have to consider how the local utility handles it, and PGE makes it appetizing by giving you 1:1 kWh credits.
+Maybe it’s not for everyone, but it’s a fact that there’s enough sun to cover a household’s needs and it pays back in a reasonable timeframe.
+3 Reply
+2 more replies
+lintimes •4mo ago
+The US solar industry is being predicted to collapse and tax incentives are drying up. People should be waiting for stronger incentive around financing and prices. This is a
+chatgpt written post with way too much bias.
+https://time.com/6565415/rooftop-solar-industry-collapse/
+https://www.nytimes.com/2025/06/11/climate/rooftop-solar-republicans-congress.html
+-3 Reply
+shibboleth2005 •4mo ago
+slom68 •4mo ago
+So if you lose power will your solar panels power your house during a power outage? My buddy has solar panels and I was astonished when he told me during some
+winter when his neighborhood lost power so did he, even though he had solar panels.
+1 Reply
+brrent OP•4mo ago
+No, you can only do that if you have a battery. It sounds weird at first, but it’s a safety mechanism for people working on the power lines. If the power is out you can’t
+be sending power through the lines while people are working on them. Agreed though — it would be cool if they could figure that out.
+7 Reply
+Frunnin •4mo ago
+NE
+https://www.reddit.com/r/Portland/comments/1m9ehwq/for_those_interested_in_solar/ 9/11
+11/23/25, 3:27 PM For those interested in solar : r/Portland
+The solution is a transfer switch just like people with generators have. I am surprised that is not an option.
+Skip to main content
+Create
+2 Reply
+1 more reply
+Soft-Department292 •4mo ago
+I’m more curious about your dormer addition and the company that did it - are you happy with the results? How long did the project take? Any advice / watch outs?
+1 Reply
+brrent OP•4mo ago
+Green Rabbet Builders. They’re amazing. Look for someone that has fast track inspections with the city. If they don’t have a record with the city it can be a nightmare.
+Started in March, should be ending in September. Everything just got drywalled so we’re getting close.
+2 Reply
+jerseyoutwest •4mo ago
+Thanks for the writeup! I’ve been thinking about getting panels but got such sketch vibes from every company that i’ve not done it.
+1 Reply
+chingdao •4mo ago
+I had solar panels put on my small 1951 ranch by DPI (local company) and a heat pump system a few years ago. It completely changed my life. We're low income and my
+electric bill last month was $7. We also had 5 years of not paying federal taxes due to the break. Way better (and our house is livable!) than investing in the stock market
+IMO. This is a lot of information as a solar panel enthusiast I don't know (squirrel guards?), but I've found it to be a great investment. Get into solar if you can!
+1 Reply
+brrent OP•4mo ago
+Definitely look into squirrel guards! Also known as critter guards. Squirrels can builds nests under the panels and chew the wires. Maybe not an issue in your area.
+1 Reply
+ChickaBok •4mo ago
+Aaaah thanks for this; we're in a very very similar boat (our roof is aging and our house is growing a bit small so we're thinking of bumping up a dormer and installing
+solar while we're at it). This info is very helpful!
+As a related aside, what did it cost you to get the dormer installed?
+1 Reply
+brrent OP•4mo ago
+I think it depends greatly on the size and what you’re adding in the dormer, but I think ~$150k is a safe budgetary estimate. Highly recommend Green Rabbet
+Builders!
+1 Reply
+Kahluabomb •4mo ago
+Does your system actually power your house, or does it just go straight into the utility line and back to the power company?
+This is my one issue with solar right now is that the majority of installs I see, have zero capability of actually powering the home, which seems to be an important aspect
+of having your own ability to generate electricity.
+I'm always curious on everyone's setups.
+1 Reply
+Miserable_Air_675 •4mo ago
+A brief side note I warn my clients about things like this avoid putting this much information about a construction permit project online.
+Data for solar permits based on size and date of install with installer name can result in looking up your address/name and other information. Hopefully some of the data
+is altered for personal information protection.
+1 Reply
+Adventurous-Mud-5508 •4mo ago
+MAX Yellow Line Top 1% Commenter
+I got an 8.4 kW system plus 15kWh battery from Sunpath earlier this year and I'm super happy with it.
+https://www.reddit.com/r/Portland/comments/1m9ehwq/for_those_interested_in_solar/ 10/11
+11/23/25, 3:27 PM For those interested in solar : r/Portland
+I wouldn't say *only* consider systems with microinverters... they are considered a premium product but it's a bit of an oversimplification that if one panel gets shaded
+with a central inverter you lose efficiency across the whole array. All of the competing products I looked at at least let me split the roof into a coupleC rseeaptaerate zones, even
+if every panel wasn't totally independent. So if one panel got shaded, you might lose some efficiency across like 1/4 of your system but the other 3/4 wouldn't be
+affected at all. That said, I got Enphase anyway for the longer warranties and because I wanted to avoid Tesla.
+1 Reply
+Beneficial_Bike6768 •3mo ago
+Beneficial_Bike6768 •3mo ago
+Beneficial_Bike6768 •3mo ago
+Beneficial_Bike6768 •3mo ago
+Shadowpnw •18d ago
+PROMOTED
+PROMOTED
+Reddit Rules Privacy Policy User Agreement Accessibility Reddit, Inc. © 2025. All rights reserved.
+https://www.reddit.com/r/Portland/comments/1m9ehwq/for_those_interested_in_solar/ 11/11

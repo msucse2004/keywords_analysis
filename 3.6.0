@@ -1,0 +1,10 @@
+Collecting reportlab
+  Downloading reportlab-4.4.7-py3-none-any.whl.metadata (1.7 kB)
+Requirement already satisfied: pillow>=9.0.0 in c:\users\msucs\anaconda3\envs\keyword-analysis\lib\site-packages (from reportlab) (12.1.0)
+Requirement already satisfied: charset-normalizer in c:\users\msucs\anaconda3\envs\keyword-analysis\lib\site-packages (from reportlab) (3.4.4)
+Downloading reportlab-4.4.7-py3-none-any.whl (2.0 MB)
+   ---------------------------------------- 2.0/2.0 MB 36.0 MB/s  0:00:00
+
+Installing collected packages: reportlab
+Successfully installed reportlab-4.4.7
+

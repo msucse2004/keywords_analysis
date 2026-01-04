@@ -4,13 +4,21 @@ import warnings
 import yaml
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional, List
+from typing import Optional, List, Dict, Union
 
 
 @dataclass
 class Config:
     """Configuration for keyword analysis pipeline."""
     
+    # DATA_SOURCE_GROUPS can be:
+    # - List of strings (single folder per group): ["meeting", "news"]
+    # - List of lists (multiple folders per group): [["meeting"], ["news", "raddit"]]
+    # - Mixed: ["meeting", ["news", "raddit"]]
+    # Will be converted to Dict[str, List[str]] in from_yaml
+    DATA_SOURCE_GROUPS: Union[List[Union[str, List[str]]], Dict[str, List[str]]] = field(default_factory=lambda: [["meeting", "news", "raddit"]])
+    # Legacy support: if DATA_SOURCE_GROUPS not set, use DATA_SOURCE_FOLDERS
+    DATA_SOURCE_FOLDERS: List[str] = field(default_factory=lambda: ["meeting", "news", "raddit"])
     KEYWORD_TOP_N: int = 50
     TREND_PLOT_TOP_N: int = 10
     COOC_NODE_TOP_N: int = 60
@@ -57,14 +65,81 @@ class Config:
         return list(set(exclude_keywords))
     
     @classmethod
-    def from_yaml(cls, yaml_path: Path) -> "Config":
+    def _normalize_data_source_groups(cls, groups: Union[List[Union[str, List[str]]], Dict[str, List[str]]]) -> Dict[str, List[str]]:
+        """Normalize DATA_SOURCE_GROUPS to Dict[str, List[str]] format.
+        
+        Args:
+            groups: Can be list of strings/lists or dict
+            
+        Returns:
+            Dict mapping group names to folder lists
+        """
+        if isinstance(groups, dict):
+            return groups
+        
+        if not isinstance(groups, list):
+            # Single string or other type - wrap it
+            groups = [groups]
+        
+        normalized = {}
+        for item in groups:
+            if isinstance(item, str):
+                # Single folder - use folder name as group name
+                normalized[item] = [item]
+            elif isinstance(item, list):
+                # Multiple folders - create group name from folder names
+                if len(item) == 1:
+                    group_name = item[0]
+                else:
+                    group_name = '_'.join(item)
+                normalized[group_name] = item
+            else:
+                warnings.warn(f"Invalid group item: {item}, skipping")
+        
+        return normalized
+    
+    @staticmethod
+    def validate_folders(folders: List[str], input_dir: Path) -> tuple[bool, List[str], List[str]]:
+        """Validate that folder names exist in the input directory.
+        
+        Args:
+            folders: List of folder names to validate
+            input_dir: Base input directory (e.g., data/raw_txt)
+            
+        Returns:
+            Tuple of (is_valid, valid_folders, invalid_folders)
+        """
+        if not input_dir.exists():
+            return False, [], folders
+        
+        # Get all subdirectories in input_dir
+        existing_folders = {d.name for d in input_dir.iterdir() if d.is_dir()}
+        
+        valid_folders = []
+        invalid_folders = []
+        
+        for folder in folders:
+            if folder in existing_folders:
+                valid_folders.append(folder)
+            else:
+                invalid_folders.append(folder)
+        
+        is_valid = len(invalid_folders) == 0
+        return is_valid, valid_folders, invalid_folders
+    
+    @classmethod
+    def from_yaml(cls, yaml_path: Path, input_dir: Optional[Path] = None) -> "Config":
         """Load configuration from YAML file.
         
         Args:
             yaml_path: Path to YAML configuration file
+            input_dir: Optional input directory for folder validation (e.g., data/raw_txt)
             
         Returns:
             Config instance with values from YAML (defaults for missing keys)
+            
+        Raises:
+            ValueError: If folder validation fails
         """
         config = cls()
         
@@ -76,11 +151,50 @@ class Config:
                 if hasattr(config, key):
                     setattr(config, key, value)
         
+        # Normalize DATA_SOURCE_GROUPS to Dict format
+        if hasattr(config, 'DATA_SOURCE_GROUPS') and config.DATA_SOURCE_GROUPS:
+            config.DATA_SOURCE_GROUPS = cls._normalize_data_source_groups(config.DATA_SOURCE_GROUPS)
+        
+        # Legacy support: if DATA_SOURCE_GROUPS is not set but DATA_SOURCE_FOLDERS is,
+        # create a default group
+        if (not config.DATA_SOURCE_GROUPS or 
+            (isinstance(config.DATA_SOURCE_GROUPS, dict) and not config.DATA_SOURCE_GROUPS)):
+            if yaml_data.get('DATA_SOURCE_FOLDERS'):
+                folders = yaml_data['DATA_SOURCE_FOLDERS']
+                if isinstance(folders, list) and folders:
+                    # Create a single group with all folders
+                    group_name = '_'.join(folders) if len(folders) > 1 else folders[0]
+                    config.DATA_SOURCE_GROUPS = {group_name: folders}
+        
+        # Validate folders if input_dir is provided
+        if input_dir and config.DATA_SOURCE_GROUPS:
+            if isinstance(config.DATA_SOURCE_GROUPS, dict):
+                all_folders = set()
+                for folders_list in config.DATA_SOURCE_GROUPS.values():
+                    all_folders.update(folders_list)
+                
+                is_valid, valid_folders, invalid_folders = cls.validate_folders(
+                    list(all_folders), input_dir
+                )
+                
+                if not is_valid:
+                    existing_folders = sorted({d.name for d in input_dir.iterdir() if d.is_dir()})
+                    error_msg = (
+                        f"폴더명 검증 실패: 다음 폴더들이 '{input_dir}' 아래에 존재하지 않습니다:\n"
+                        f"  잘못된 폴더명: {', '.join(invalid_folders)}\n"
+                        f"  올바른 폴더명: {', '.join(valid_folders) if valid_folders else '(없음)'}\n"
+                        f"  실제 존재하는 폴더: {', '.join(existing_folders) if existing_folders else '(없음)'}\n"
+                        f"\nconfig/default.yaml의 DATA_SOURCE_GROUPS를 확인하고 수정해주세요."
+                    )
+                    raise ValueError(error_msg)
+        
         return config
     
     def to_dict(self) -> dict:
         """Convert config to dictionary."""
         return {
+            'DATA_SOURCE_GROUPS': self.DATA_SOURCE_GROUPS,
+            'DATA_SOURCE_FOLDERS': self.DATA_SOURCE_FOLDERS,
             'KEYWORD_TOP_N': self.KEYWORD_TOP_N,
             'TREND_PLOT_TOP_N': self.TREND_PLOT_TOP_N,
             'COOC_NODE_TOP_N': self.COOC_NODE_TOP_N,

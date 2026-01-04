@@ -1,0 +1,33 @@
+# Files that failed date parsing from filename or are missing from filtered_data
+# Expected format: YYYY-MM-DD_filename.txt
+# These files have no date information in their filename or were not processed
+# Date parsing is done from filename only (no content reading)
+
+# Excluded files (not included in this list):
+# - Folders named or containing: _files
+# - Files starting with: fig_
+# - Files starting with: ~$
+# - Paths containing: Aug. 17, 2021_Report says fuel spills would be massive environmental disaster in Cascadia Subduction Zone earthquake - OPB_files
+
+data\raw_txt\meeting\2020.08.30.City Auditor - City Recorder - Council Minutes .PDF
+data\raw_txt\meeting\2022-06-30 PCEF Comm Presentation.PDF
+data\raw_txt\news\Example of Text Analysis.pdf
+data\raw_txt\raddit\2018\Oct_2018 News.docx
+data\raw_txt\raddit\2019\2019 News.docx
+data\raw_txt\raddit\2019\Clean Energy Jobs Bill_ What Oregonians Need to Know _ r_Portland.pdf
+data\raw_txt\raddit\2019\Extra charge on Portland shoppers_ grocery receipts is part of new city-wide clean energy tax _ r_Portland.pdf
+data\raw_txt\raddit\2020\2020 News.docx
+data\raw_txt\raddit\2021\2021 News(1).docx
+data\raw_txt\raddit\2021\2021 News.docx
+data\raw_txt\raddit\2021\_Dirty, out of control__ Portland_s cleaning more trash of the streets than ever, but you wouldn_t know it _ r_Portland.pdf
+data\raw_txt\raddit\2021\_I just want to see things turn around__ Hundreds of volunteers clean up downtown Portland -- Hundreds of volunteers, including Portland Mayor Ted Wheeler, signed up to clean up downtown on Thursday morning. _ r_Portland.pdf
+data\raw_txt\raddit\2022\2022 News(1).docx
+data\raw_txt\raddit\2022\2022 News.docx
+data\raw_txt\raddit\2022\March_2022.docx
+data\raw_txt\raddit\2022\March_portland-clean-energy-fund.pdf
+data\raw_txt\raddit\2023\2023 News.docx
+data\raw_txt\raddit\2024\2024 News(1).docx
+data\raw_txt\raddit\2024\2024 News.docx
+data\raw_txt\raddit\2025\2025 News(1).docx
+data\raw_txt\raddit\2025\2025 News.docx
+raddit\2021\_I just want to see things turn around__ Hundreds of volunteers clean up downtown Portland -- Hundreds of volunteers, including Portland Mayor Ted Wheeler, signed up to clean up downtown on Thursday morning. _ r_Portland.pdf

@@ -1,5 +1,37 @@
+# 데이터 소스 그룹별 설정 (각 그룹별로 별도의 output 생성)
+# 각 항목이 하나의 그룹입니다. 단일 폴더는 문자열, 여러 폴더는 리스트로 지정
+# 그룹 이름은 자동으로 생성됩니다 (단일 폴더는 폴더명, 여러 폴더는 폴더명들을 _로 연결)
+# 
+# 사용 예시:
+#   - meeting                    # 단일 폴더 → output/figures/meeting/
+#   - [news, raddit]            # 여러 폴더 → output/figures/news_raddit/
+#   - news                      # 단일 폴더 → output/figures/news/
+#   - [meeting, news, raddit]   # 여러 폴더 → output/figures/meeting_news_raddit/
+DATA_SOURCE_GROUPS:
+  - meeting
+  - news
+  - raddit
+  - [news, raddit]
+
+# 제외할 폴더명 리스트 (경로의 일부로 포함되면 제외)
+# 예: "_files" 폴더가 경로에 포함되면 제외 (예: "news/2021/article_files/")
+EXCLUDE_FOLDERS:
+  - "_files"          # HTML 데이터 폴더
+
+# 제외할 파일명 리스트 (파일명이 정확히 일치하거나 시작하면 제외)
+# 예: "fig_"로 시작하는 파일명 제외 (예: "fig_trends.pdf")
+EXCLUDE_FILES:
+  - "fig_"           # 출력 파일 (fig_*.pdf)
+  - "~$"             # 임시 파일 (~$*.docx)
+
+# 제외할 특정 경로 패턴 리스트 (상대 경로의 일부로 포함되면 제외)
+# 예: "Aug. 17, 2021_Report says fuel spills would be massive environmental disaster in Cascadia Subduction Zone earthquake - OPB_files"
+#     경로에 이 문자열이 포함되면 제외
+EXCLUDE_PATH_PATTERNS:
+  - "Aug. 17, 2021_Report says fuel spills would be massive environmental disaster in Cascadia Subduction Zone earthquake - OPB_files"
+
 KEYWORD_TOP_N: 50
-TREND_PLOT_TOP_N: 3
+TREND_PLOT_TOP_N: 1
 COOC_NODE_TOP_N: 60
 COOC_EDGE_TOP_N: 300
 COOC_LABEL_TOP_N: 25

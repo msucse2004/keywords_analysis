@@ -9,8 +9,13 @@ library(dplyr)
 library(yaml)
 source("r/common_theme.R")
 
+# Get paths from environment variables (set by Python) or use defaults
+tables_dir <- Sys.getenv("R_TABLES_DIR", "output/tables")
+figures_dir <- Sys.getenv("R_FIGURES_DIR", "output/figures")
+project_root <- Sys.getenv("R_PROJECT_ROOT", ".")
+
 # Read configuration
-config_file <- "config/default.yaml"
+config_file <- file.path(project_root, "config/default.yaml")
 if (file.exists(config_file)) {
   config <- read_yaml(config_file)
   cooc_node_top_n <- config$COOC_NODE_TOP_N
@@ -24,7 +29,7 @@ if (file.exists(config_file)) {
 
 # Load exclude keywords (same as Python)
 exclude_keywords <- character(0)
-exclude_file <- "data/exclude/keywords.txt"
+exclude_file <- file.path(project_root, "data/exclude/keywords.txt")
 if (file.exists(exclude_file)) {
   exclude_content <- readLines(exclude_file, warn = FALSE)
   if (length(exclude_content) > 0 && nchar(trimws(exclude_content[1])) > 0) {
@@ -35,8 +40,8 @@ if (file.exists(exclude_file)) {
 }
 
 # Read data
-nodes <- read.csv("output/tables/cooccurrence_nodes.csv", stringsAsFactors = FALSE)
-edges <- read.csv("output/tables/cooccurrence_edges.csv", stringsAsFactors = FALSE)
+nodes <- read.csv(file.path(tables_dir, "cooccurrence_nodes.csv"), stringsAsFactors = FALSE)
+edges <- read.csv(file.path(tables_dir, "cooccurrence_edges.csv"), stringsAsFactors = FALSE)
 
 # Filter out excluded keywords (case-insensitive, same as Python)
 if (length(exclude_keywords) > 0) {
@@ -85,7 +90,7 @@ ggraph_data <- ggraph(g, layout = layout) +
   )
 
 # Save PNG
-ggsave("output/figures/fig_keyword_map.png", 
+ggsave(file.path(figures_dir, "fig_keyword_map.png"), 
        plot = ggraph_data, 
        width = 12, 
        height = 10, 
@@ -93,12 +98,12 @@ ggsave("output/figures/fig_keyword_map.png",
        bg = "white")
 
 # Save PDF
-ggsave("output/figures/fig_keyword_map.pdf", 
+ggsave(file.path(figures_dir, "fig_keyword_map.pdf"), 
        plot = ggraph_data, 
        width = 12, 
        height = 10,
        device = "pdf",
        bg = "white")
 
-cat("Keyword map figure saved to output/figures/\n")
+cat(paste("Keyword map figure saved to", figures_dir, "\n"))
 

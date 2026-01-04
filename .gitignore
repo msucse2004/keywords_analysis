@@ -20,10 +20,14 @@ wheels/
 .installed.cfg
 *.egg
 
-# Virtual environments
+# Virtual environments (excluding anaconda/env/environment.yml)
 venv/
-env/
-ENV/
+# Note: env/ and ENV/ patterns are commented out to allow anaconda/env/environment.yml
+# If you need to ignore other env/ directories, use more specific patterns like:
+# **/venv/
+# **/ENV/ (but not anaconda/env/)
+# env/
+# ENV/
 
 # IDE
 .vscode/

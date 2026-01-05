@@ -467,7 +467,6 @@ def create_year_specific_figures(timeseries_df: pd.DataFrame, topn_by_date_df: p
                 logger.warning(f"Year {year}: Failed to calculate co-occurrence: {e}")
                 # Ensure empty files exist even if calculation fails
                 try:
-                    import pandas as pd
                     empty_nodes = pd.DataFrame(columns=['token', 'doc_freq'])
                     empty_edges = pd.DataFrame(columns=['source', 'target', 'weight'])
                     empty_nodes.to_csv(year_tables_dir / 'cooccurrence_nodes.csv', index=False)
@@ -477,7 +476,6 @@ def create_year_specific_figures(timeseries_df: pd.DataFrame, topn_by_date_df: p
         else:
             # No tokens, create empty files
             try:
-                import pandas as pd
                 empty_nodes = pd.DataFrame(columns=['token', 'doc_freq'])
                 empty_edges = pd.DataFrame(columns=['source', 'target', 'weight'])
                 empty_nodes.to_csv(year_tables_dir / 'cooccurrence_nodes.csv', index=False)

@@ -308,6 +308,91 @@ def find_original_file_from_filtered(filtered_file_path: Path, filtered_data_dir
         return None
 
 
+def has_new_files(raw_txt_dir: Path, filtered_data_dir: Path, config_path: Path) -> bool:
+    """Check if there are new files in raw_txt that haven't been processed to filtered_data.
+    
+    Args:
+        raw_txt_dir: Directory containing raw files
+        filtered_data_dir: Directory containing filtered files
+        config_path: Path to YAML configuration file
+        
+    Returns:
+        True if there are new files to process, False otherwise
+    """
+    if not raw_txt_dir.exists():
+        return False
+    
+    if not filtered_data_dir.exists():
+        return True  # If filtered_data doesn't exist, we need to process
+    
+    # Load config
+    with open(config_path, 'r', encoding='utf-8') as f:
+        config = yaml.safe_load(f)
+    
+    data_source_groups = config.get('DATA_SOURCE_GROUPS', [])
+    exclude_folders = config.get('EXCLUDE_FOLDERS', ['_files'])
+    exclude_files = config.get('EXCLUDE_FILES', ['fig_', '~$'])
+    exclude_path_patterns = config.get('EXCLUDE_PATH_PATTERNS', [])
+    
+    # Collect all unique folder names from groups
+    all_folders: Set[str] = set()
+    for group in data_source_groups:
+        if isinstance(group, list):
+            all_folders.update(group)
+        else:
+            all_folders.add(group)
+    
+    # Find all files in raw_txt_dir
+    txt_files = list(raw_txt_dir.rglob('*.txt'))
+    pdf_files = list(raw_txt_dir.rglob('*.pdf')) if PDF_SUPPORT else []
+    html_files = list(raw_txt_dir.rglob('*.html')) + list(raw_txt_dir.rglob('*.htm'))
+    docx_files = list(raw_txt_dir.rglob('*.docx')) + list(raw_txt_dir.rglob('*.DOCX'))
+    all_files = txt_files + pdf_files + html_files + docx_files
+    
+    # Check each file
+    for file_path in all_files:
+        try:
+            rel_path = file_path.relative_to(raw_txt_dir)
+            first_folder = rel_path.parts[0] if rel_path.parts else None
+            
+            # Skip if not in source folders
+            if first_folder not in all_folders:
+                continue
+            
+            # Check exclude rules
+            file_path_str = str(file_path)
+            file_name = file_path.name
+            
+            # Check excluded folders
+            if any(folder_name in file_path_str for folder_name in exclude_folders):
+                continue
+            
+            # Check excluded path patterns
+            if any(pattern in file_path_str for pattern in exclude_path_patterns):
+                continue
+            
+            # Check excluded files
+            if any(file_name.startswith(prefix) for prefix in exclude_files):
+                continue
+            
+            # Validate date parsing
+            parsed_date = validate_date_parsing(file_path)
+            if parsed_date is None:
+                continue  # Skip files that can't be parsed
+            
+            # Calculate destination filename
+            dest_path = create_destination_filename(file_path, parsed_date, raw_txt_dir, filtered_data_dir)
+            
+            # Check if destination file exists
+            if not dest_path.exists():
+                return True  # Found a new file
+            
+        except Exception:
+            continue  # Skip files with errors
+    
+    return False  # No new files found
+
+
 def create_destination_filename(source_path: Path, parsed_date: str, raw_txt_dir: Path, 
                                 filtered_data_dir: Path) -> Path:
     """Create destination filename with date prefix and sanitized name.
@@ -555,6 +640,9 @@ def filter_and_copy_files(raw_txt_dir: Path, filtered_data_dir: Path,
     Returns:
         Dictionary with 'success' and 'failed' file lists
     """
+    # Create filtered_data directory if it doesn't exist
+    filtered_data_dir.mkdir(parents=True, exist_ok=True)
+    
     # Load config
     with open(config_path, 'r', encoding='utf-8') as f:
         config = yaml.safe_load(f)

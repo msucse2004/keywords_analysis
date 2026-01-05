@@ -121,8 +121,14 @@ def main():
     if not args.config.exists():
         raise FileNotFoundError(f"Config file not found: {args.config}")
     
-    if not args.input_dir.exists():
-        raise FileNotFoundError(f"Input directory not found: {args.input_dir}")
+    # Note: input_dir existence is checked in run_pipeline, which will auto-filter from raw_txt if needed
+    # Only check if both input_dir and raw_txt are missing
+    raw_txt_dir = args.data_dir / 'raw_txt'
+    if not args.input_dir.exists() and not raw_txt_dir.exists():
+        raise FileNotFoundError(
+            f"Neither input directory ({args.input_dir}) nor raw_txt directory ({raw_txt_dir}) found. "
+            f"Please provide at least one of them."
+        )
     
     # Run pipeline
     run_pipeline(

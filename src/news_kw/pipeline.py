@@ -596,6 +596,55 @@ def run_pipeline(config_path: Path, input_dir: Path, output_dir: Path,
         create_py_figures: Whether to create Python preview figures
         create_r_figures: Whether to create R publication-quality figures
     """
+    # Auto-filter: If input_dir doesn't exist or has new files from raw_txt, filter first
+    raw_txt_dir = data_dir / 'raw_txt'
+    filtered_data_dir = data_dir / 'filtered_data'
+    
+    should_filter = False
+    filter_reason = ""
+    
+    if not input_dir.exists() and raw_txt_dir.exists():
+        should_filter = True
+        filter_reason = "Input directory not found"
+    elif input_dir.exists() and raw_txt_dir.exists():
+        # Check if there are new files in raw_txt
+        from news_kw.filter_files import has_new_files
+        if has_new_files(raw_txt_dir, filtered_data_dir, config_path):
+            should_filter = True
+            filter_reason = "New files found in raw_txt"
+    
+    if should_filter:
+        # Setup basic logging for filtering step
+        main_log_dir = output_dir / 'logs'
+        main_log_dir.mkdir(parents=True, exist_ok=True)
+        logging.basicConfig(
+            level=logging.INFO,
+            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+            handlers=[
+                logging.FileHandler(main_log_dir / 'pipeline.log', encoding='utf-8'),
+                logging.StreamHandler()
+            ]
+        )
+        logger = logging.getLogger(__name__)
+        
+        logger.info("=" * 60)
+        logger.info(f"{filter_reason}. Auto-filtering from raw_txt...")
+        logger.info("=" * 60)
+        
+        from news_kw.filter_files import filter_and_copy_files
+        try:
+            filter_and_copy_files(
+                raw_txt_dir=raw_txt_dir,
+                filtered_data_dir=filtered_data_dir,
+                config_path=config_path
+            )
+            logger.info("File filtering completed. Proceeding with pipeline...")
+            # Update input_dir to filtered_data_dir
+            input_dir = filtered_data_dir
+        except Exception as e:
+            logger.error(f"Auto-filtering failed: {e}")
+            raise
+    
     # Setup main logging
     main_log_dir = output_dir / 'logs'
     setup_logging(main_log_dir)

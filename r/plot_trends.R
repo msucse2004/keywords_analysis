@@ -14,6 +14,14 @@ tables_dir <- Sys.getenv("R_TABLES_DIR", "output/tables")
 figures_dir <- Sys.getenv("R_FIGURES_DIR", "output/figures")
 project_root <- Sys.getenv("R_PROJECT_ROOT", ".")
 
+# Debug: Print environment variables (helps diagnose conda run issues)
+cat("=== R Script Environment Variables ===\n")
+cat(sprintf("R_TABLES_DIR: %s\n", tables_dir))
+cat(sprintf("R_FIGURES_DIR: %s\n", figures_dir))
+cat(sprintf("R_PROJECT_ROOT: %s\n", project_root))
+cat(sprintf("Working directory: %s\n", getwd()))
+cat("=====================================\n\n")
+
 # Read configuration (if available, otherwise use defaults)
 config_file <- file.path(project_root, "config/default.yaml")
 if (file.exists(config_file)) {
@@ -23,8 +31,14 @@ if (file.exists(config_file)) {
   trend_top_n <- 10
 }
 
+# Check if input file exists before reading
+input_file <- file.path(tables_dir, "keyword_topn_by_date.csv")
+if (!file.exists(input_file)) {
+  stop(sprintf("Input file not found: %s\nPlease check that R_TABLES_DIR environment variable is set correctly.\nCurrent R_TABLES_DIR: %s", input_file, tables_dir))
+}
+
 # Read data (same file as Python uses)
-topn_by_date <- read.csv(file.path(tables_dir, "keyword_topn_by_date.csv"), stringsAsFactors = FALSE)
+topn_by_date <- read.csv(input_file, stringsAsFactors = FALSE)
 topn_by_date$date <- as.Date(topn_by_date$date)
 
 # Filter to Top N ranks (same as Python - all ranks from 1 to TREND_PLOT_TOP_N)

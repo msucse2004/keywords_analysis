@@ -40,6 +40,7 @@ venv/
 data/processed/
 data/raw_txt/*
 !data/raw_txt/.gitkeep
+data/raw_txt.zip
 output/
 *.log
 

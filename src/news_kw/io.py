@@ -526,6 +526,8 @@ def convert_docx_to_pdf(docx_path: Path, output_pdf_path: Path) -> bool:
                      '--outdir', tmpdir, str(docx_path)],
                     capture_output=True,
                     text=True,
+                    encoding='utf-8',
+                    errors='replace',
                     timeout=60
                 )
                 if result.returncode == 0:

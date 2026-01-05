@@ -52,6 +52,8 @@ def _find_conda_env_rscript(conda_env_name: str, logger: logging.Logger = None) 
             ['conda', 'env', 'list'],
             capture_output=True,
             text=True,
+            encoding='utf-8',
+            errors='replace',
             check=True
         )
         
@@ -181,6 +183,8 @@ def run_r_scripts(project_root: Path, logger: logging.Logger,
                     env=env,
                     capture_output=True,
                     text=True,
+                    encoding='utf-8',
+                    errors='replace',
                     check=True
                 )
                 logger.info(f"Successfully executed {script}")

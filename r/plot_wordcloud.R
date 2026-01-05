@@ -13,6 +13,14 @@ tables_dir <- Sys.getenv("R_TABLES_DIR", "output/tables")
 figures_dir <- Sys.getenv("R_FIGURES_DIR", "output/figures")
 project_root <- Sys.getenv("R_PROJECT_ROOT", ".")
 
+# Debug: Print environment variables (helps diagnose conda run issues)
+cat("=== R Script Environment Variables ===\n")
+cat(sprintf("R_TABLES_DIR: %s\n", tables_dir))
+cat(sprintf("R_FIGURES_DIR: %s\n", figures_dir))
+cat(sprintf("R_PROJECT_ROOT: %s\n", project_root))
+cat(sprintf("Working directory: %s\n", getwd()))
+cat("=====================================\n\n")
+
 # Read configuration
 config_file <- file.path(project_root, "config/default.yaml")
 if (file.exists(config_file)) {
@@ -42,8 +50,14 @@ if (file.exists(exclude_file)) {
   }
 }
 
+# Check if input file exists before reading
+input_file <- file.path(tables_dir, "keyword_topk.csv")
+if (!file.exists(input_file)) {
+  stop(sprintf("Input file not found: %s\nPlease check that R_TABLES_DIR environment variable is set correctly.\nCurrent R_TABLES_DIR: %s", input_file, tables_dir))
+}
+
 # Read data
-keywords <- read.csv(file.path(tables_dir, "keyword_topk.csv"), stringsAsFactors = FALSE)
+keywords <- read.csv(input_file, stringsAsFactors = FALSE)
 
 # Filter out excluded keywords (case-insensitive, same as Python)
 if (length(exclude_keywords) > 0) {

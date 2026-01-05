@@ -14,6 +14,14 @@ tables_dir <- Sys.getenv("R_TABLES_DIR", "output/tables")
 figures_dir <- Sys.getenv("R_FIGURES_DIR", "output/figures")
 project_root <- Sys.getenv("R_PROJECT_ROOT", ".")
 
+# Debug: Print environment variables (helps diagnose conda run issues)
+cat("=== R Script Environment Variables ===\n")
+cat(sprintf("R_TABLES_DIR: %s\n", tables_dir))
+cat(sprintf("R_FIGURES_DIR: %s\n", figures_dir))
+cat(sprintf("R_PROJECT_ROOT: %s\n", project_root))
+cat(sprintf("Working directory: %s\n", getwd()))
+cat("=====================================\n\n")
+
 # Read configuration
 config_file <- file.path(project_root, "config/default.yaml")
 if (file.exists(config_file)) {
@@ -39,9 +47,19 @@ if (file.exists(exclude_file)) {
   }
 }
 
+# Check if input files exist before reading
+nodes_file <- file.path(tables_dir, "cooccurrence_nodes.csv")
+edges_file <- file.path(tables_dir, "cooccurrence_edges.csv")
+if (!file.exists(nodes_file)) {
+  stop(sprintf("Input file not found: %s\nPlease check that R_TABLES_DIR environment variable is set correctly.\nCurrent R_TABLES_DIR: %s", nodes_file, tables_dir))
+}
+if (!file.exists(edges_file)) {
+  stop(sprintf("Input file not found: %s\nPlease check that R_TABLES_DIR environment variable is set correctly.\nCurrent R_TABLES_DIR: %s", edges_file, tables_dir))
+}
+
 # Read data
-nodes <- read.csv(file.path(tables_dir, "cooccurrence_nodes.csv"), stringsAsFactors = FALSE)
-edges <- read.csv(file.path(tables_dir, "cooccurrence_edges.csv"), stringsAsFactors = FALSE)
+nodes <- read.csv(nodes_file, stringsAsFactors = FALSE)
+edges <- read.csv(edges_file, stringsAsFactors = FALSE)
 
 # Filter out excluded keywords (case-insensitive, same as Python)
 if (length(exclude_keywords) > 0) {

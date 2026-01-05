@@ -5,6 +5,7 @@ import subprocess
 import shutil
 import os
 import glob
+import platform
 from pathlib import Path
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from news_kw.config import Config
@@ -35,6 +36,66 @@ def setup_logging(log_dir: Path):
     )
 
 
+def _find_conda_env_rscript(conda_env_name: str, logger: logging.Logger = None) -> Path:
+    """Find Rscript executable in the specified conda environment.
+    
+    Args:
+        conda_env_name: Name of the conda environment
+        logger: Optional logger for debug messages
+    
+    Returns:
+        Path to Rscript executable, or None if not found
+    """
+    # Try to get conda info to find environment path
+    try:
+        result = subprocess.run(
+            ['conda', 'env', 'list'],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        
+        # Parse conda env list output to find environment path
+        for line in result.stdout.split('\n'):
+            if conda_env_name in line:
+                # Extract path (format: "env_name    /path/to/env")
+                parts = line.split()
+                if len(parts) >= 2:
+                    env_path = Path(parts[-1])
+                    
+                    # Find Rscript based on platform
+                    if platform.system() == 'Windows':
+                        rscript_path = env_path / 'Scripts' / 'Rscript.exe'
+                    else:
+                        rscript_path = env_path / 'bin' / 'Rscript'
+                    
+                    if rscript_path.exists():
+                        if logger:
+                            logger.debug(f"Found Rscript at: {rscript_path}")
+                        return rscript_path
+    except Exception as e:
+        if logger:
+            logger.warning(f"Failed to find conda environment path: {e}")
+    
+    # Fallback: try common conda installation paths
+    conda_base = os.environ.get('CONDA_PREFIX') or os.environ.get('CONDA_DEFAULT_ENV')
+    if conda_base:
+        conda_base_path = Path(conda_base).parent.parent if 'envs' in str(conda_base) else Path(conda_base)
+        env_path = conda_base_path / 'envs' / conda_env_name
+        
+        if platform.system() == 'Windows':
+            rscript_path = env_path / 'Scripts' / 'Rscript.exe'
+        else:
+            rscript_path = env_path / 'bin' / 'Rscript'
+        
+        if rscript_path.exists():
+            if logger:
+                logger.debug(f"Found Rscript at: {rscript_path}")
+            return rscript_path
+    
+    return None
+
+
 def run_r_scripts(project_root: Path, logger: logging.Logger, 
                   tables_dir: Path = None, figures_dir: Path = None):
     """Run R scripts to generate publication-quality figures.
@@ -49,16 +110,23 @@ def run_r_scripts(project_root: Path, logger: logging.Logger,
     """
     # Always use conda environment for R scripts
     conda_env_name = 'keyword-analysis'
-    conda_exe = shutil.which('conda')
     
-    if not conda_exe:
-        logger.warning("conda not found in PATH. Skipping R figure generation.")
-        logger.warning("Please ensure conda is installed and available in PATH.")
-        return
+    # Try to find Rscript in conda environment directly (more reliable than conda run on Windows)
+    rscript_path = _find_conda_env_rscript(conda_env_name, logger)
     
-    # Use conda run to execute R scripts in the conda environment
-    # This ensures R packages from conda environment are used
-    rscript_cmd = ['conda', 'run', '-n', conda_env_name, 'Rscript']
+    if rscript_path and rscript_path.exists():
+        # Use direct path to Rscript (more reliable on Windows)
+        rscript_cmd = [str(rscript_path)]
+        logger.info(f"Using Rscript from conda environment: {rscript_path}")
+    else:
+        # Fallback to conda run if direct path not found
+        conda_exe = shutil.which('conda')
+        if not conda_exe:
+            logger.warning("conda not found in PATH. Skipping R figure generation.")
+            logger.warning("Please ensure conda is installed and available in PATH.")
+            return
+        rscript_cmd = ['conda', 'run', '-n', conda_env_name, 'Rscript']
+        logger.info(f"Using conda run to execute Rscript (fallback method)")
     
     # Set default paths if not provided
     if tables_dir is None:
@@ -92,28 +160,44 @@ def run_r_scripts(project_root: Path, logger: logging.Logger,
             try:
                 logger.info(f"Running {script} in conda environment '{conda_env_name}' (attempt {attempt + 1}/{max_retries})...")
                 # Set environment variables for R scripts to use
+                # Use absolute paths to avoid any path resolution issues
                 env = os.environ.copy()
-                env['R_TABLES_DIR'] = str(tables_dir)
-                env['R_FIGURES_DIR'] = str(figures_dir)
-                env['R_PROJECT_ROOT'] = str(project_root)
+                env['R_TABLES_DIR'] = str(tables_dir.resolve())
+                env['R_FIGURES_DIR'] = str(figures_dir.resolve())
+                env['R_PROJECT_ROOT'] = str(project_root.resolve())
+                
+                # Log environment variables for debugging
+                logger.debug(f"R_TABLES_DIR: {env['R_TABLES_DIR']}")
+                logger.debug(f"R_FIGURES_DIR: {env['R_FIGURES_DIR']}")
+                logger.debug(f"R_PROJECT_ROOT: {env['R_PROJECT_ROOT']}")
                 
                 # Use conda run to execute R script in conda environment
-                # This ensures R packages from conda environment are used
+                # Note: conda run may not pass environment variables correctly on Windows
+                # As a workaround, pass them via command line using R -e with Sys.setenv
+                # or use --no-capture-output to see actual errors
                 result = subprocess.run(
-                    rscript_cmd + [str(script_path)],
-                    cwd=str(project_root),
+                    rscript_cmd + [str(script_path.resolve())],
+                    cwd=str(project_root.resolve()),
                     env=env,
                     capture_output=True,
                     text=True,
                     check=True
                 )
                 logger.info(f"Successfully executed {script}")
+                # Log R output for debugging (especially environment variable debugging)
                 if result.stdout:
-                    logger.debug(f"R output: {result.stdout}")
+                    # Print to logger - R scripts may output debug info via cat()
+                    for line in result.stdout.strip().split('\n'):
+                        if line.strip():
+                            logger.info(f"R output: {line}")
                 success = True
                 break
             except subprocess.CalledProcessError as e:
                 error_msg = e.stderr if e.stderr else str(e)
+                # Also check stdout for error messages (R may output errors to stdout)
+                if e.stdout:
+                    logger.error(f"R stdout: {e.stdout}")
+                
                 # Check if it's a file locking error
                 if "cannot access the file" in error_msg.lower() or "being used by another process" in error_msg.lower():
                     if attempt < max_retries - 1:
@@ -130,6 +214,9 @@ def run_r_scripts(project_root: Path, logger: logging.Logger,
                     logger.error(f"Failed to run {script}: {e}")
                     if e.stderr:
                         logger.error(f"R error output: {e.stderr}")
+                    # Log stdout as well - may contain useful debug info
+                    if e.stdout:
+                        logger.error(f"R stdout: {e.stdout}")
                     break
             except Exception as e:
                 logger.error(f"Unexpected error running {script}: {e}")

@@ -372,6 +372,33 @@ def run_pipeline_single_group(group_name: str, folders: list, config: Config,
         logger=logger
     )
     
+    # Step 9: Organize overall files (move root-level files to overall folder)
+    logger.info("Step 9: Organizing overall files...")
+    overall_tables_dir = group_tables_dir / 'overall'
+    overall_figures_dir = group_figures_dir / 'overall'
+    overall_tables_dir.mkdir(parents=True, exist_ok=True)
+    overall_figures_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Move root-level table files to overall folder (if not already in a year folder)
+    for file_path in group_tables_dir.glob('*.csv'):
+        # Skip if file is already in a subdirectory
+        if file_path.parent == group_tables_dir:
+            target_path = overall_tables_dir / file_path.name
+            if not target_path.exists():
+                shutil.move(str(file_path), str(target_path))
+                logger.debug(f"Moved table file: {file_path.name} -> overall/")
+    
+    # Move root-level figure files to overall folder (if not already in a year folder)
+    for file_path in group_figures_dir.glob('*'):
+        # Skip if file is already in a subdirectory
+        if file_path.is_file() and file_path.parent == group_figures_dir:
+            target_path = overall_figures_dir / file_path.name
+            if not target_path.exists():
+                shutil.move(str(file_path), str(target_path))
+                logger.debug(f"Moved figure file: {file_path.name} -> overall/")
+    
+    logger.info("Overall files organized successfully!")
+    
     logger.info(f"Group '{group_name}' processing completed successfully!")
     logger.info("=" * 60)
 
@@ -420,13 +447,7 @@ def create_year_specific_figures(timeseries_df: pd.DataFrame, topn_by_date_df: p
     for year in years:
         logger.info(f"Processing year {year}...")
         
-        # Create year-specific directories
-        year_tables_dir = output_dir / 'tables' / group_name / str(year)
-        year_figures_dir = output_dir / 'figures' / group_name / str(year)
-        year_tables_dir.mkdir(parents=True, exist_ok=True)
-        year_figures_dir.mkdir(parents=True, exist_ok=True)
-        
-        # Filter data for this year
+        # Filter data for this year first (before creating directories)
         year_start = pd.Timestamp(f"{year}-01-01")
         year_end = pd.Timestamp(f"{year}-12-31")
         year_timeseries = timeseries_df[
@@ -435,8 +456,14 @@ def create_year_specific_figures(timeseries_df: pd.DataFrame, topn_by_date_df: p
         ].copy()
         
         if len(year_timeseries) == 0:
-            logger.warning(f"No data found for year {year}. Skipping.")
+            logger.info(f"No data found for year {year}. Skipping folder creation.")
             continue
+        
+        # Create year-specific directories only if data exists
+        year_tables_dir = output_dir / 'tables' / group_name / str(year)
+        year_figures_dir = output_dir / 'figures' / group_name / str(year)
+        year_tables_dir.mkdir(parents=True, exist_ok=True)
+        year_figures_dir.mkdir(parents=True, exist_ok=True)
         
         # Create year-specific topn_by_date
         year_topn_by_date = create_topn_by_date(
@@ -527,7 +554,23 @@ def create_year_specific_figures(timeseries_df: pd.DataFrame, topn_by_date_df: p
             else:
                 logger.warning(f"R scripts directory not found: {r_dir}")
         
-        logger.info(f"Year {year} processing completed")
+        # Check if any files were actually created
+        tables_files = list(year_tables_dir.glob('*'))
+        figures_files = list(year_figures_dir.glob('*'))
+        
+        # If no files were created, remove the empty directories
+        if len(tables_files) == 0 and len(figures_files) == 0:
+            logger.warning(f"No files created for year {year}. Removing empty directories.")
+            try:
+                if year_tables_dir.exists():
+                    year_tables_dir.rmdir()
+                if year_figures_dir.exists():
+                    year_figures_dir.rmdir()
+            except OSError:
+                # Directory not empty or other error - ignore
+                pass
+        else:
+            logger.info(f"Year {year} processing completed")
 
 
 def run_pipeline(config_path: Path, input_dir: Path, output_dir: Path, 

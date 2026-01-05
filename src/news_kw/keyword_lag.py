@@ -83,23 +83,34 @@ def analyze_keyword_lag_monthly(source_groups: List[str], target_group: str,
         logger = logging.getLogger(__name__)
     
     # Load keyword_by_date for source groups
+    # Try overall folder first, then root folder (for backward compatibility)
     source_keywords = {}
     for group in source_groups:
-        csv_path = output_dir / group / 'keyword_by_date.csv'
+        # Try overall folder first (current structure)
+        csv_path = output_dir / group / 'overall' / 'keyword_by_date.csv'
+        if not csv_path.exists():
+            # Fallback to root folder (for backward compatibility)
+            csv_path = output_dir / group / 'keyword_by_date.csv'
+        
         df = load_keyword_by_date(csv_path)
         if len(df) > 0:
             source_keywords[group] = df
             logger.info(f"Loaded {len(df)} keyword-date records from {group}")
         else:
-            logger.warning(f"No keyword_by_date.csv found for source group: {group}")
+            logger.warning(f"No keyword_by_date.csv found for source group: {group} (tried: {csv_path})")
     
     # Load keyword_by_date for target group
-    target_csv_path = output_dir / target_group / 'keyword_by_date.csv'
+    # Try overall folder first, then root folder (for backward compatibility)
+    target_csv_path = output_dir / target_group / 'overall' / 'keyword_by_date.csv'
+    if not target_csv_path.exists():
+        # Fallback to root folder (for backward compatibility)
+        target_csv_path = output_dir / target_group / 'keyword_by_date.csv'
+    
     target_df = load_keyword_by_date(target_csv_path)
     if len(target_df) > 0:
         logger.info(f"Loaded {len(target_df)} keyword-date records from {target_group}")
     else:
-        logger.warning(f"No keyword_by_date.csv found for target group: {target_group}")
+        logger.warning(f"No keyword_by_date.csv found for target group: {target_group} (tried: {target_csv_path})")
     
     # Get monthly Top N keywords for each source group
     source_monthly_topn = {}

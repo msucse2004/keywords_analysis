@@ -125,21 +125,24 @@ def create_topn_by_date(timeseries_df: pd.DataFrame, config: Config, exclude_key
         return empty_df
     
     # Combine all dates
-    topn_by_date = pd.concat(topn_by_date_list, ignore_index=True)
-    
-    # Reorder columns: date, rank, token, freq, freq_norm
-    topn_by_date = topn_by_date[['date', 'rank', 'token', 'freq', 'freq_norm']]
-    
-    # Final safety check: filter out excluded keywords one more time
-    if exclude_keywords:
-        exclude_set = {kw.lower() for kw in exclude_keywords}
-        topn_by_date = topn_by_date[~topn_by_date['token'].str.lower().isin(exclude_set)].copy()
-    
-    # Convert date to string for CSV
-    topn_by_date['date'] = topn_by_date['date'].dt.strftime('%Y-%m-%d')
-    
-    # Sort by date and rank
-    topn_by_date = topn_by_date.sort_values(['date', 'rank']).reset_index(drop=True)
+    if len(topn_by_date_list) == 0:
+        # Return empty DataFrame with correct columns if no data
+        topn_by_date = pd.DataFrame(columns=['date', 'rank', 'token', 'freq', 'freq_norm'])
+    else:
+        topn_by_date = pd.concat(topn_by_date_list, ignore_index=True)
+        # Reorder columns: date, rank, token, freq, freq_norm
+        topn_by_date = topn_by_date[['date', 'rank', 'token', 'freq', 'freq_norm']]
+        
+        # Final safety check: filter out excluded keywords one more time
+        if exclude_keywords:
+            exclude_set = {kw.lower() for kw in exclude_keywords}
+            topn_by_date = topn_by_date[~topn_by_date['token'].str.lower().isin(exclude_set)].copy()
+        
+        # Convert date to string for CSV
+        topn_by_date['date'] = topn_by_date['date'].dt.strftime('%Y-%m-%d')
+        
+        # Sort by date and rank
+        topn_by_date = topn_by_date.sort_values(['date', 'rank']).reset_index(drop=True)
     
     # Save
     output_path = output_dir / 'keyword_topn_by_date.csv'

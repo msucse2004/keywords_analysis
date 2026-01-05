@@ -18,6 +18,7 @@ from news_kw.timeseries import create_timeseries, create_topn_by_date
 from news_kw.cooccurrence import calculate_cooccurrence
 from news_kw.viz import plot_keyword_trends, plot_keyword_map, plot_wordcloud_python
 from news_kw.similarity import create_similarity_analysis
+from news_kw.keyword_lag import analyze_keyword_lag_monthly
 
 
 def setup_logging(log_dir: Path):
@@ -686,6 +687,61 @@ def run_pipeline(config_path: Path, input_dir: Path, output_dir: Path,
         except Exception as e:
             logger.warning(f"Failed to create similarity analysis: {e}")
             logger.exception(e)
+    
+    # Create keyword lag analysis (News/Reddit -> Meeting)
+    logger.info("=" * 60)
+    logger.info("Creating keyword lag analysis (News/Reddit -> Meeting)...")
+    logger.info("=" * 60)
+    try:
+        tables_dir = output_dir / 'tables'
+        time_lagging_dir = output_dir / 'TimeLagging'
+        time_lagging_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Analyze keywords from news and reddit appearing in meeting
+        df = analyze_keyword_lag_monthly(
+            source_groups=['news', 'reddit'],
+            target_group='meeting',
+            top_n=config.KEYWORD_TOP_N,
+            exclude_keywords=exclude_keywords,
+            output_dir=tables_dir,
+            logger=logger
+        )
+        
+        # Save results
+        output_file = time_lagging_dir / 'keyword_lag_analysis.csv'
+        df.to_csv(output_file, index=False)
+        logger.info(f"Keyword lag analysis results saved to: {output_file}")
+        
+        # Log summary statistics
+        if len(df) > 0:
+            total_keywords = len(df)
+            appears_in_meeting = df['appears_in_target'].sum()
+            percentage = (appears_in_meeting / total_keywords * 100) if total_keywords > 0 else 0
+            
+            logger.info(f"Total monthly Top {config.KEYWORD_TOP_N} keywords from news/reddit: {total_keywords}")
+            logger.info(f"Keywords that appear in meeting: {appears_in_meeting} ({percentage:.1f}%)")
+            
+            # Analyze time lag for keywords that appear in meeting
+            df_with_lag = df[df['appears_in_target']].copy()
+            if len(df_with_lag) > 0:
+                logger.info(f"Time Lag Statistics (for keywords appearing in meeting):")
+                logger.info(f"  Average lag: {df_with_lag['days_lag'].mean():.1f} days")
+                logger.info(f"  Median lag: {df_with_lag['days_lag'].median():.1f} days")
+                logger.info(f"  Min lag: {df_with_lag['days_lag'].min():.0f} days")
+                logger.info(f"  Max lag: {df_with_lag['days_lag'].max():.0f} days")
+        
+        # Run R script to generate visualizations
+        if create_r_figures:
+            project_root = config_path.resolve().parent.parent
+            run_r_scripts(project_root, logger,
+                         tables_dir=time_lagging_dir,
+                         figures_dir=time_lagging_dir,
+                         r_scripts=['r/plot_keyword_lag.R'])
+        
+        logger.info("Keyword lag analysis completed successfully!")
+    except Exception as e:
+        logger.warning(f"Failed to create keyword lag analysis: {e}")
+        logger.exception(e)
 
 
 def _run_group_wrapper(group_name: str, folders: list, config_dict: dict, 

@@ -35,38 +35,46 @@ def create_timeseries(tokens_df: pd.DataFrame, keyword_topk: pd.DataFrame,
     # Filter tokens to top N only
     filtered_tokens = tokens_df[tokens_df['token'].isin(top_tokens)].copy()
     
-    # Group by date and token
-    timeseries = filtered_tokens.groupby(['date', 'token']).size().reset_index(name='freq')
+    # Convert date to datetime and then to monthly period
+    filtered_tokens['date'] = pd.to_datetime(filtered_tokens['date'])
+    filtered_tokens['month'] = filtered_tokens['date'].dt.to_period('M')
     
-    # Get date range
-    date_range = pd.date_range(
-        start=tokens_df['date'].min(),
-        end=tokens_df['date'].max(),
-        freq='D'
+    # Group by month and token (aggregate by month)
+    timeseries = filtered_tokens.groupby(['month', 'token']).size().reset_index(name='freq')
+    
+    # Get monthly date range (convert tokens_df date to datetime first)
+    tokens_df_date = pd.to_datetime(tokens_df['date'])
+    date_range = pd.period_range(
+        start=tokens_df_date.min().to_period('M'),
+        end=tokens_df_date.max().to_period('M'),
+        freq='M'
     )
     
-    # Create full date-token grid
+    # Create full month-token grid
     date_token_grid = pd.MultiIndex.from_product(
         [date_range, top_tokens],
-        names=['date', 'token']
+        names=['month', 'token']
     ).to_frame(index=False)
     
     # Merge with actual frequencies
     timeseries_full = date_token_grid.merge(
         timeseries,
-        on=['date', 'token'],
+        on=['month', 'token'],
         how='left'
     ).fillna(0)
     
-    # Calculate normalized frequency (per date)
-    date_totals = timeseries_full.groupby('date')['freq'].transform('sum')
+    # Calculate normalized frequency (per month)
+    date_totals = timeseries_full.groupby('month')['freq'].transform('sum')
     timeseries_full['freq_norm'] = timeseries_full['freq'] / date_totals.replace(0, 1)
+    
+    # Convert month period to string format (YYYY-MM) for CSV
+    timeseries_full['date'] = timeseries_full['month'].astype(str)
+    
+    # Remove month column, keep only date
+    timeseries_full = timeseries_full.drop(columns=['month'])
     
     # Sort
     timeseries_full = timeseries_full.sort_values(['date', 'token']).reset_index(drop=True)
-    
-    # Convert date to string for CSV
-    timeseries_full['date'] = timeseries_full['date'].dt.strftime('%Y-%m-%d')
     
     # Save
     output_path = output_dir / 'keyword_timeseries.csv'
@@ -89,8 +97,9 @@ def create_topn_by_date(timeseries_df: pd.DataFrame, config: Config, exclude_key
     """
     output_dir.mkdir(parents=True, exist_ok=True)
     
-    # Convert date back to datetime for sorting
-    timeseries_df['date'] = pd.to_datetime(timeseries_df['date'])
+    # Convert date string to period for monthly aggregation
+    # Date format is YYYY-MM (monthly)
+    timeseries_df['date'] = pd.to_datetime(timeseries_df['date']).dt.to_period('M')
     
     # Filter out excluded keywords (case-insensitive)
     exclude_set = set()
@@ -98,7 +107,7 @@ def create_topn_by_date(timeseries_df: pd.DataFrame, config: Config, exclude_key
         exclude_set = {kw.lower() for kw in exclude_keywords}
         timeseries_df = timeseries_df[~timeseries_df['token'].str.lower().isin(exclude_set)].copy()
     
-    # For each date, get Top N keywords by frequency
+    # For each month, get Top N keywords by frequency
     topn_by_date_list = []
     
     for date in sorted(timeseries_df['date'].unique()):
@@ -152,8 +161,8 @@ def create_topn_by_date(timeseries_df: pd.DataFrame, config: Config, exclude_key
             exclude_set = {kw.lower() for kw in exclude_keywords}
             topn_by_date = topn_by_date[~topn_by_date['token'].str.lower().isin(exclude_set)].copy()
         
-        # Convert date to string for CSV
-        topn_by_date['date'] = topn_by_date['date'].dt.strftime('%Y-%m-%d')
+        # Convert date period to string format (YYYY-MM) for CSV
+        topn_by_date['date'] = topn_by_date['date'].astype(str)
         
         # Sort by date and rank
         topn_by_date = topn_by_date.sort_values(['date', 'rank']).reset_index(drop=True)

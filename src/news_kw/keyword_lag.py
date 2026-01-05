@@ -17,12 +17,14 @@ def load_keyword_by_date(csv_path: Path) -> pd.DataFrame:
         
     Returns:
         DataFrame with columns: date, token, freq
+        Note: date is in YYYY-MM format (monthly aggregation), converted to datetime
     """
     if not csv_path.exists():
         return pd.DataFrame()
     
     df = pd.read_csv(csv_path)
-    df['date'] = pd.to_datetime(df['date'])
+    # Date format is YYYY-MM (monthly), convert to datetime (first day of month)
+    df['date'] = pd.to_datetime(df['date'] + '-01')
     return df
 
 

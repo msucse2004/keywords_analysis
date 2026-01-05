@@ -429,8 +429,15 @@ def create_year_specific_figures(timeseries_df: pd.DataFrame, topn_by_date_df: p
         logger = logging.getLogger(__name__)
     
     # Convert dates to datetime if needed
+    # Date format is YYYY-MM (monthly), convert to datetime (first day of month)
     timeseries_df = timeseries_df.copy()
-    timeseries_df['date'] = pd.to_datetime(timeseries_df['date'])
+    # If date is already a Period type, convert to string first, then to datetime
+    if hasattr(timeseries_df['date'].dtype, 'freq') or str(timeseries_df['date'].dtype).startswith('period'):
+        # Period type - convert to timestamp first
+        timeseries_df['date'] = pd.to_datetime(timeseries_df['date'].astype(str) + '-01')
+    else:
+        # String format YYYY-MM - add '-01' to make it a valid date
+        timeseries_df['date'] = pd.to_datetime(timeseries_df['date'].astype(str) + '-01')
     
     # Extract unique years
     years = sorted(timeseries_df['date'].dt.year.unique())

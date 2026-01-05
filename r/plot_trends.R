@@ -64,7 +64,9 @@ if (nrow(topn_by_date) == 0) {
   quit(status = 0)  # Exit gracefully
 }
 
-topn_by_date$date <- as.Date(topn_by_date$date)
+# Convert date string (YYYY-MM format) to Date object (first day of month)
+# This handles monthly aggregation data
+topn_by_date$date <- as.Date(paste(topn_by_date$date, "01", sep = "-"))
 
 # Filter to Top N ranks (same as Python - all ranks from 1 to TREND_PLOT_TOP_N)
 plot_data <- topn_by_date %>%
@@ -172,9 +174,11 @@ p <- ggplot(plot_data, aes(x = date, y = freq, color = factor(rank))) +
   common_theme() +
   theme(legend.position = "right") +
   scale_y_continuous(limits = c(0, NA), labels = scales::number_format(accuracy = 1)) +  # Set y-axis minimum to 0, display as integers
-  scale_x_date(date_breaks = "1 month", 
-               labels = date_label_func,  # Use labels parameter instead of date_labels
-               guide = guide_axis(angle = 0)) +  # Year and month on separate lines
+  scale_x_date(
+    breaks = unique(plot_data$date),  # Show all dates
+    labels = date_label_func,  # Use custom label function
+    guide = guide_axis(angle = 0)  # Year and month on separate lines
+  ) +
   theme(axis.text.x = element_text(size = 7))  # Reduce x-axis font size
 
 # Save PNG

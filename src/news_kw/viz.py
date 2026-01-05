@@ -24,8 +24,10 @@ def plot_keyword_trends(topn_by_date_path: Path, config: Config, output_path: Pa
     """
     try:
         # Read the Top N by date CSV
+        # Date format is YYYY-MM (monthly aggregation)
         df = pd.read_csv(topn_by_date_path)
-        df['date'] = pd.to_datetime(df['date'])
+        # Convert YYYY-MM format to datetime (first day of month)
+        df['date'] = pd.to_datetime(df['date'] + '-01')
         
         # Filter to Top N ranks (1 to TREND_PLOT_TOP_N)
         df_filtered = df[df['rank'] <= config.TREND_PLOT_TOP_N].copy()

@@ -62,8 +62,13 @@ def extract_keywords(tokens_df: pd.DataFrame, config: Config, exclude_keywords: 
     tfidf_path = output_dir / 'tfidf_topk.csv'
     tfidf_scores.to_csv(tfidf_path, index=False)
     
-    # Keyword by date
-    keyword_by_date = tokens_df.groupby(['date', 'token']).size().reset_index(name='freq')
+    # Keyword by date (aggregated by month)
+    tokens_df['date'] = pd.to_datetime(tokens_df['date'])
+    tokens_df['month'] = tokens_df['date'].dt.to_period('M')
+    keyword_by_date = tokens_df.groupby(['month', 'token']).size().reset_index(name='freq')
+    # Convert month period to string format (YYYY-MM)
+    keyword_by_date['date'] = keyword_by_date['month'].astype(str)
+    keyword_by_date = keyword_by_date.drop(columns=['month'])
     keyword_by_date = keyword_by_date.sort_values(['date', 'freq'], ascending=[True, False])
     
     # Save keyword by date

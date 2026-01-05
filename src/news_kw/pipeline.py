@@ -455,8 +455,11 @@ def create_year_specific_figures(timeseries_df: pd.DataFrame, topn_by_date_df: p
             (timeseries_df['date'] <= year_end)
         ].copy()
         
-        if len(year_timeseries) == 0:
-            logger.info(f"No data found for year {year}. Skipping folder creation.")
+        # Check if there's any data with freq > 0 (actual data, not just zeros)
+        year_timeseries_with_data = year_timeseries[year_timeseries['freq'] > 0].copy()
+        
+        if len(year_timeseries_with_data) == 0:
+            logger.info(f"No data with freq > 0 found for year {year}. Skipping folder creation.")
             continue
         
         # Create year-specific directories only if data exists

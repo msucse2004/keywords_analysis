@@ -7,6 +7,7 @@ library(dplyr)
 library(yaml)
 library(viridis)
 library(ggrepel)
+library(scales)
 source("r/common_theme.R")
 
 # Get paths from environment variables (set by Python) or use defaults
@@ -137,8 +138,21 @@ date_label_func <- function(x) {
 }
 
 # Plot with smoothing curve for each rank (same as Python)
+# Use only geom_smooth for smooth curves (like overall)
+# Adjust span based on number of data points for better smoothing with few points
+n_dates <- length(unique(plot_data$date))
+# Use larger span for fewer data points to ensure smooth curve
+# For very few points (<=3), use maximum span (1.0) to ensure curve is drawn
+smooth_span <- if (n_dates <= 3) 1.0 else if (n_dates <= 10) 0.5 else 0.3
+
 p <- ggplot(plot_data, aes(x = date, y = freq, color = factor(rank))) +
-  geom_smooth(method = "loess", span = 0.3, se = FALSE, linewidth = 2.5, alpha = 0.7) +
+  # Use only smoothing curve (no straight line)
+  # For very few points, use method = "lm" (linear) as fallback, otherwise "loess"
+  geom_smooth(method = if (n_dates <= 3) "lm" else "loess", 
+              span = smooth_span, 
+              se = FALSE, 
+              linewidth = 2.5, 
+              alpha = 0.7) +
   geom_point(size = 3, alpha = 0.9) +
   geom_text_repel(aes(label = token), 
                   size = 2.5, 
@@ -157,7 +171,7 @@ p <- ggplot(plot_data, aes(x = date, y = freq, color = factor(rank))) +
   ) +
   common_theme() +
   theme(legend.position = "right") +
-  scale_y_continuous(limits = c(0, NA)) +  # Set y-axis minimum to 0, same as Python
+  scale_y_continuous(limits = c(0, NA), labels = scales::number_format(accuracy = 1)) +  # Set y-axis minimum to 0, display as integers
   scale_x_date(date_breaks = "1 month", 
                labels = date_label_func,  # Use labels parameter instead of date_labels
                guide = guide_axis(angle = 0)) +  # Year and month on separate lines

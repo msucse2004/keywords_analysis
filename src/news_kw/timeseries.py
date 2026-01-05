@@ -112,8 +112,22 @@ def create_topn_by_date(timeseries_df: pd.DataFrame, config: Config, exclude_key
             continue
         # Sort by frequency descending and take Top N
         top_n = date_data.nlargest(config.TREND_PLOT_TOP_N, 'freq')
-        # Add rank column
+        
+        # Ensure we always have TREND_PLOT_TOP_N ranks
+        # If we have fewer keywords than TREND_PLOT_TOP_N, repeat the last keyword
+        if len(top_n) < config.TREND_PLOT_TOP_N:
+            # Get the last row (lowest frequency keyword we have)
+            last_row = top_n.iloc[-1].copy() if len(top_n) > 0 else None
+            if last_row is not None:
+                # Repeat the last keyword to fill up to TREND_PLOT_TOP_N
+                rows_to_add = config.TREND_PLOT_TOP_N - len(top_n)
+                additional_rows = pd.DataFrame([last_row] * rows_to_add)
+                top_n = pd.concat([top_n, additional_rows], ignore_index=True)
+        
+        # Add rank column (always 1 to TREND_PLOT_TOP_N)
         top_n['rank'] = range(1, len(top_n) + 1)
+        # Ensure we only keep exactly TREND_PLOT_TOP_N rows
+        top_n = top_n.head(config.TREND_PLOT_TOP_N)
         topn_by_date_list.append(top_n)
     
     # Check if we have any data to concatenate

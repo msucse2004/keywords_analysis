@@ -33,7 +33,7 @@ EXCLUDE_PATH_PATTERNS:
   - "Aug. 17, 2021_Report says fuel spills would be massive environmental disaster in Cascadia Subduction Zone earthquake - OPB_files"
 
 KEYWORD_TOP_N: 50
-TREND_PLOT_TOP_N: 1
+TREND_PLOT_TOP_N: 3
 COOC_NODE_TOP_N: 60
 COOC_EDGE_TOP_N: 300
 COOC_LABEL_TOP_N: 25

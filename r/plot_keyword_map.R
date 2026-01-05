@@ -50,28 +50,83 @@ if (file.exists(exclude_file)) {
 # Check if input files exist before reading
 nodes_file <- file.path(tables_dir, "cooccurrence_nodes.csv")
 edges_file <- file.path(tables_dir, "cooccurrence_edges.csv")
-if (!file.exists(nodes_file)) {
-  error_msg <- paste("Input file not found:", nodes_file, 
-                     "\nPlease check that R_TABLES_DIR environment variable is set correctly.",
-                     "\nCurrent R_TABLES_DIR:", tables_dir)
-  stop(error_msg)
-}
-if (!file.exists(edges_file)) {
-  error_msg <- paste("Input file not found:", edges_file,
-                     "\nPlease check that R_TABLES_DIR environment variable is set correctly.",
-                     "\nCurrent R_TABLES_DIR:", tables_dir)
-  stop(error_msg)
+if (!file.exists(nodes_file) || !file.exists(edges_file)) {
+  warning("Co-occurrence files not found. Skipping plot.")
+  # Create empty figure files to indicate no data
+  empty_png <- file.path(figures_dir, "fig_keyword_map.png")
+  empty_pdf <- file.path(figures_dir, "fig_keyword_map.pdf")
+  if (!dir.exists(figures_dir)) {
+    dir.create(figures_dir, recursive = TRUE)
+  }
+  # Create empty PNG
+  png(empty_png, width = 12*300, height = 10*300, res = 300, bg = "white")
+  plot.new()
+  text(0.5, 0.5, "No data to plot\n(Co-occurrence files not found)", cex = 2, col = "gray")
+  dev.off()
+  # Create empty PDF
+  pdf(empty_pdf, width = 12, height = 10, bg = "white")
+  plot.new()
+  text(0.5, 0.5, "No data to plot\n(Co-occurrence files not found)", cex = 2, col = "gray")
+  dev.off()
+  cat(paste("Empty figure files created (files not found):", figures_dir, "\n"))
+  quit(status = 0)  # Exit gracefully
 }
 
 # Read data
 nodes <- read.csv(nodes_file, stringsAsFactors = FALSE)
 edges <- read.csv(edges_file, stringsAsFactors = FALSE)
 
+# Check if data is empty
+if (nrow(nodes) == 0 || nrow(edges) == 0) {
+  warning("No co-occurrence data to plot. Skipping plot.")
+  # Create empty figure files to indicate no data
+  empty_png <- file.path(figures_dir, "fig_keyword_map.png")
+  empty_pdf <- file.path(figures_dir, "fig_keyword_map.pdf")
+  if (!dir.exists(figures_dir)) {
+    dir.create(figures_dir, recursive = TRUE)
+  }
+  # Create empty PNG
+  png(empty_png, width = 12*300, height = 10*300, res = 300, bg = "white")
+  plot.new()
+  text(0.5, 0.5, "No data to plot", cex = 2, col = "gray")
+  dev.off()
+  # Create empty PDF
+  pdf(empty_pdf, width = 12, height = 10, bg = "white")
+  plot.new()
+  text(0.5, 0.5, "No data to plot", cex = 2, col = "gray")
+  dev.off()
+  cat(paste("Empty figure files created (no data):", figures_dir, "\n"))
+  quit(status = 0)  # Exit gracefully
+}
+
 # Filter out excluded keywords (case-insensitive, same as Python)
 if (length(exclude_keywords) > 0) {
   exclude_set <- tolower(exclude_keywords)
   nodes <- nodes %>% filter(!tolower(token) %in% exclude_set)
   edges <- edges %>% filter(!tolower(source) %in% exclude_set & !tolower(target) %in% exclude_set)
+  
+  # Check again after filtering
+  if (nrow(nodes) == 0 || nrow(edges) == 0) {
+    warning("No co-occurrence data after filtering. Skipping plot.")
+    # Create empty figure files to indicate no data
+    empty_png <- file.path(figures_dir, "fig_keyword_map.png")
+    empty_pdf <- file.path(figures_dir, "fig_keyword_map.pdf")
+    if (!dir.exists(figures_dir)) {
+      dir.create(figures_dir, recursive = TRUE)
+    }
+    # Create empty PNG
+    png(empty_png, width = 12*300, height = 10*300, res = 300, bg = "white")
+    plot.new()
+    text(0.5, 0.5, "No data to plot\n(After filtering)", cex = 2, col = "gray")
+    dev.off()
+    # Create empty PDF
+    pdf(empty_pdf, width = 12, height = 10, bg = "white")
+    plot.new()
+    text(0.5, 0.5, "No data to plot\n(After filtering)", cex = 2, col = "gray")
+    dev.off()
+    cat(paste("Empty figure files created (no data after filtering):", figures_dir, "\n"))
+    quit(status = 0)  # Exit gracefully
+  }
 }
 
 # Create graph

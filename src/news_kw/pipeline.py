@@ -461,7 +461,29 @@ def create_year_specific_figures(timeseries_df: pd.DataFrame, topn_by_date_df: p
         
         # Create cooccurrence for this year (if we have tokens)
         if len(year_tokens) > 0:
-            calculate_cooccurrence(year_tokens, config, year_tables_dir, exclude_keywords)
+            try:
+                calculate_cooccurrence(year_tokens, config, year_tables_dir, exclude_keywords)
+            except Exception as e:
+                logger.warning(f"Year {year}: Failed to calculate co-occurrence: {e}")
+                # Ensure empty files exist even if calculation fails
+                try:
+                    import pandas as pd
+                    empty_nodes = pd.DataFrame(columns=['token', 'doc_freq'])
+                    empty_edges = pd.DataFrame(columns=['source', 'target', 'weight'])
+                    empty_nodes.to_csv(year_tables_dir / 'cooccurrence_nodes.csv', index=False)
+                    empty_edges.to_csv(year_tables_dir / 'cooccurrence_edges.csv', index=False)
+                except Exception as create_error:
+                    logger.warning(f"Year {year}: Failed to create empty co-occurrence files: {create_error}")
+        else:
+            # No tokens, create empty files
+            try:
+                import pandas as pd
+                empty_nodes = pd.DataFrame(columns=['token', 'doc_freq'])
+                empty_edges = pd.DataFrame(columns=['source', 'target', 'weight'])
+                empty_nodes.to_csv(year_tables_dir / 'cooccurrence_nodes.csv', index=False)
+                empty_edges.to_csv(year_tables_dir / 'cooccurrence_edges.csv', index=False)
+            except Exception as create_error:
+                logger.warning(f"Year {year}: Failed to create empty co-occurrence files: {create_error}")
         
         # Create Python figures
         if create_py_figures:

@@ -13,12 +13,12 @@ class Config:
     
     # DATA_SOURCE_GROUPS can be:
     # - List of strings (single folder per group): ["meeting", "news"]
-    # - List of lists (multiple folders per group): [["meeting"], ["news", "raddit"]]
-    # - Mixed: ["meeting", ["news", "raddit"]]
+    # - List of lists (multiple folders per group): [["meeting"], ["news", "reddit"]]
+    # - Mixed: ["meeting", ["news", "reddit"]]
     # Will be converted to Dict[str, List[str]] in from_yaml
-    DATA_SOURCE_GROUPS: Union[List[Union[str, List[str]]], Dict[str, List[str]]] = field(default_factory=lambda: [["meeting", "news", "raddit"]])
+    DATA_SOURCE_GROUPS: Union[List[Union[str, List[str]]], Dict[str, List[str]]] = field(default_factory=lambda: [["meeting", "news", "reddit"]])
     # Legacy support: if DATA_SOURCE_GROUPS not set, use DATA_SOURCE_FOLDERS
-    DATA_SOURCE_FOLDERS: List[str] = field(default_factory=lambda: ["meeting", "news", "raddit"])
+    DATA_SOURCE_FOLDERS: List[str] = field(default_factory=lambda: ["meeting", "news", "reddit"])
     KEYWORD_TOP_N: int = 50
     TREND_PLOT_TOP_N: int = 10
     COOC_NODE_TOP_N: int = 60

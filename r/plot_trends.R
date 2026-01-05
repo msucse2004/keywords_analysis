@@ -6,6 +6,7 @@ library(ggplot2)
 library(dplyr)
 library(yaml)
 library(viridis)
+library(ggrepel)
 source("r/common_theme.R")
 
 # Get paths from environment variables (set by Python) or use defaults
@@ -83,12 +84,19 @@ date_label_func <- function(x) {
 p <- ggplot(plot_data, aes(x = date, y = freq, color = factor(rank))) +
   geom_smooth(method = "loess", span = 0.3, se = FALSE, linewidth = 2.5, alpha = 0.7) +
   geom_point(size = 3, alpha = 0.9) +
-  geom_text(aes(label = token), hjust = 0, vjust = 0, nudge_x = 5, nudge_y = 0.5, 
-            size = 2.5, fontface = "bold", color = "black", show.legend = FALSE) +
+  geom_text_repel(aes(label = token), 
+                  size = 2.5, 
+                  fontface = "bold", 
+                  color = "black", 
+                  show.legend = FALSE,
+                  max.overlaps = Inf,
+                  min.segment.length = 0,
+                  box.padding = 0.3,
+                  point.padding = 0.3) +
   scale_color_manual(values = rank_colors, name = "Rank", labels = paste("Rank", 1:trend_top_n)) +
   labs(
     title = paste("Top", trend_top_n, "Keywords by Date"),
-    x = "Date",
+    x = "Month",
     y = "Frequency"
   ) +
   common_theme() +

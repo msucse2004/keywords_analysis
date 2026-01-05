@@ -12,3 +12,6 @@ if ($LASTEXITCODE -ne 0) {
 }
 Write-Host "Python pipeline completed" -ForegroundColor Green
 
+
+
+

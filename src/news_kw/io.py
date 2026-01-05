@@ -704,7 +704,7 @@ def load_txt_articles(input_dir: Path, output_dir: Path, source_folders: Optiona
     Args:
         input_dir: Directory containing TXT, PDF, and DOCX files
         output_dir: Directory to save processed documents
-        source_folders: List of folder names to read from (e.g., ['meeting', 'news', 'raddit']).
+        source_folders: List of folder names to read from (e.g., ['meeting', 'news', 'reddit']).
                        If None, reads from all subdirectories.
         
     Returns:
@@ -720,7 +720,7 @@ def load_txt_articles(input_dir: Path, output_dir: Path, source_folders: Optiona
     
     # Filter by source folders if specified
     # Note: This checks only the first folder in the path, so files in subdirectories
-    # (e.g., raddit/2018/file.pdf, raddit/2019/subfolder/file.pdf) are all included
+    # (e.g., reddit/2018/file.pdf, reddit/2019/subfolder/file.pdf) are all included
     # as long as the top-level folder matches one of the source_folders
     if source_folders:
         filtered_files = []
@@ -731,8 +731,8 @@ def load_txt_articles(input_dir: Path, output_dir: Path, source_folders: Optiona
                 rel_path = file_path.relative_to(input_dir)
                 # Get the first part of the path (top-level folder name)
                 # This allows matching files in any depth of subdirectories
-                # Example: raddit/2018/file.pdf -> first_folder = 'raddit' ✓
-                #          raddit/2019/subfolder/file.pdf -> first_folder = 'raddit' ✓
+                # Example: reddit/2018/file.pdf -> first_folder = 'reddit' ✓
+                #          reddit/2019/subfolder/file.pdf -> first_folder = 'reddit' ✓
                 first_folder = rel_path.parts[0] if rel_path.parts else None
                 if first_folder in source_folders:
                     filtered_files.append(file_path)

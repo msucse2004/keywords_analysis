@@ -232,11 +232,11 @@ def find_original_file_from_filtered(filtered_file_path: Path, filtered_data_dir
         parsed_date, sanitized_stem = date_prefix_match.groups()
         
         # Get relative path from filtered_data_dir
-        # filtered_file_path is like: data/filtered_data/raddit/2021/YYYY-MM-DD_name.txt
-        # We need: raddit/2021/
+        # filtered_file_path is like: data/filtered_data/reddit/2021/YYYY-MM-DD_name.txt
+        # We need: reddit/2021/
         try:
             filtered_rel_path = filtered_file_path.relative_to(filtered_data_dir)
-            folder_path = filtered_rel_path.parent  # Get folder part (raddit/2021)
+            folder_path = filtered_rel_path.parent  # Get folder part (reddit/2021)
         except ValueError:
             # If relative path calculation fails, try to extract from path
             path_parts = filtered_file_path.parts

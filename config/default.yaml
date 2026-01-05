@@ -4,14 +4,16 @@
 # 
 # 사용 예시:
 #   - meeting                    # 단일 폴더 → output/figures/meeting/
-#   - [news, raddit]            # 여러 폴더 → output/figures/news_raddit/
+#   - [news, reddit]            # 여러 폴더 → output/figures/news_reddit/
 #   - news                      # 단일 폴더 → output/figures/news/
-#   - [meeting, news, raddit]   # 여러 폴더 → output/figures/meeting_news_raddit/
+#   - [meeting, news, reddit]   # 여러 폴더 → output/figures/meeting_news_reddit/
 DATA_SOURCE_GROUPS:
   - meeting
   - news
-  - raddit
-  - [news, raddit]
+  - reddit
+  - [news, reddit]
+  - [meeting, news, reddit]
+  
 
 # 제외할 폴더명 리스트 (경로의 일부로 포함되면 제외)
 # 예: "_files" 폴더가 경로에 포함되면 제외 (예: "news/2021/article_files/")

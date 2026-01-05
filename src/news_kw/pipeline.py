@@ -5,7 +5,9 @@ import subprocess
 import shutil
 import os
 import glob
+import pandas as pd
 from pathlib import Path
+from typing import List
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from news_kw.config import Config
 from news_kw.io import load_txt_articles
@@ -14,6 +16,7 @@ from news_kw.keywords import extract_keywords
 from news_kw.timeseries import create_timeseries, create_topn_by_date
 from news_kw.cooccurrence import calculate_cooccurrence
 from news_kw.viz import plot_keyword_trends, plot_keyword_map, plot_wordcloud_python
+from news_kw.similarity import create_similarity_analysis
 
 
 def setup_logging(log_dir: Path):
@@ -36,7 +39,8 @@ def setup_logging(log_dir: Path):
 
 
 def run_r_scripts(project_root: Path, logger: logging.Logger, 
-                  tables_dir: Path = None, figures_dir: Path = None):
+                  tables_dir: Path = None, figures_dir: Path = None,
+                  r_scripts: List[str] = None):
     """Run R scripts to generate publication-quality figures.
     
     Always uses conda environment 'keyword-analysis' to ensure R packages are available.
@@ -66,11 +70,12 @@ def run_r_scripts(project_root: Path, logger: logging.Logger,
     if figures_dir is None:
         figures_dir = project_root / 'output' / 'figures'
     
-    r_scripts = [
-        'r/plot_trends.R',
-        'r/plot_keyword_map.R',
-        'r/plot_wordcloud.R'
-    ]
+    if r_scripts is None:
+        r_scripts = [
+            'r/plot_trends.R',
+            'r/plot_keyword_map.R',
+            'r/plot_wordcloud.R'
+        ]
     
     logger.info("Step 7: Creating R publication-quality figures...")
     logger.info(f"Using conda environment: {conda_env_name}")
@@ -258,8 +263,159 @@ def run_pipeline_single_group(group_name: str, folders: list, config: Config,
                          tables_dir=group_tables_dir,
                          figures_dir=group_figures_dir)
     
+    # Step 8: Create year-specific figures
+    logger.info("Step 8: Creating year-specific figures...")
+    create_year_specific_figures(
+        timeseries_df=timeseries_df,
+        topn_by_date_df=topn_by_date_df,
+        keyword_topk=keyword_topk,
+        tokens_df=tokens_df,
+        group_name=group_name,
+        config=config,
+        config_path=config_path,
+        output_dir=output_dir,
+        exclude_keywords=exclude_keywords,
+        create_py_figures=create_py_figures,
+        create_r_figures=create_r_figures,
+        logger=logger
+    )
+    
     logger.info(f"Group '{group_name}' processing completed successfully!")
     logger.info("=" * 60)
+
+
+def create_year_specific_figures(timeseries_df: pd.DataFrame, topn_by_date_df: pd.DataFrame,
+                                 keyword_topk: pd.DataFrame, tokens_df: pd.DataFrame,
+                                 group_name: str, config: Config, config_path: Path,
+                                 output_dir: Path, exclude_keywords: list,
+                                 create_py_figures: bool = True, create_r_figures: bool = True,
+                                 logger: logging.Logger = None):
+    """Create year-specific figures for a group.
+    
+    Args:
+        timeseries_df: Full timeseries DataFrame
+        topn_by_date_df: Full topn_by_date DataFrame
+        keyword_topk: Full keyword topk DataFrame
+        tokens_df: Full tokens DataFrame
+        group_name: Name of the group
+        config: Config instance
+        config_path: Path to YAML configuration file
+        output_dir: Base directory for output
+        exclude_keywords: List of keywords to exclude
+        create_py_figures: Whether to create Python figures
+        create_r_figures: Whether to create R figures
+        logger: Logger instance
+    """
+    if logger is None:
+        logger = logging.getLogger(__name__)
+    
+    # Convert dates to datetime if needed
+    timeseries_df = timeseries_df.copy()
+    timeseries_df['date'] = pd.to_datetime(timeseries_df['date'])
+    
+    # Extract unique years
+    years = sorted(timeseries_df['date'].dt.year.unique())
+    
+    if len(years) == 0:
+        logger.warning(f"No years found in data for group '{group_name}'. Skipping year-specific figures.")
+        return
+    
+    logger.info(f"Creating year-specific figures for years: {years}")
+    
+    # Get project root
+    project_root = config_path.resolve().parent.parent
+    
+    for year in years:
+        logger.info(f"Processing year {year}...")
+        
+        # Create year-specific directories
+        year_tables_dir = output_dir / 'tables' / group_name / str(year)
+        year_figures_dir = output_dir / 'figures' / group_name / str(year)
+        year_tables_dir.mkdir(parents=True, exist_ok=True)
+        year_figures_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Filter data for this year
+        year_start = pd.Timestamp(f"{year}-01-01")
+        year_end = pd.Timestamp(f"{year}-12-31")
+        year_timeseries = timeseries_df[
+            (timeseries_df['date'] >= year_start) & 
+            (timeseries_df['date'] <= year_end)
+        ].copy()
+        
+        if len(year_timeseries) == 0:
+            logger.warning(f"No data found for year {year}. Skipping.")
+            continue
+        
+        # Create year-specific topn_by_date
+        year_topn_by_date = create_topn_by_date(
+            year_timeseries, config, exclude_keywords, year_tables_dir
+        )
+        
+        # Copy keyword_topk for this year (using filtered tokens to recalculate)
+        year_tokens = tokens_df.copy()
+        year_tokens['date'] = pd.to_datetime(year_tokens['date'])
+        year_tokens = year_tokens[
+            (year_tokens['date'] >= year_start) & 
+            (year_tokens['date'] <= year_end)
+        ].copy()
+        
+        if len(year_tokens) > 0:
+            # Recalculate keywords for this year
+            year_keyword_topk = extract_keywords(year_tokens, config, exclude_keywords, year_tables_dir)
+        else:
+            # Use full keyword_topk if no tokens for this year
+            year_keyword_topk = keyword_topk.copy()
+            year_keyword_topk.to_csv(year_tables_dir / 'keyword_topk.csv', index=False)
+        
+        # Create cooccurrence for this year (if we have tokens)
+        if len(year_tokens) > 0:
+            calculate_cooccurrence(year_tokens, config, year_tables_dir, exclude_keywords)
+        
+        # Create Python figures
+        if create_py_figures:
+            try:
+                plot_keyword_trends(
+                    year_tables_dir / 'keyword_topn_by_date.csv',
+                    config,
+                    year_figures_dir / 'py_keyword_trends.png'
+                )
+                logger.info(f"Year {year}: Keyword trends plot created")
+            except Exception as e:
+                logger.warning(f"Year {year}: Failed to create trends plot: {e}")
+            
+            try:
+                plot_keyword_map(
+                    year_tables_dir / 'cooccurrence_nodes.csv',
+                    year_tables_dir / 'cooccurrence_edges.csv',
+                    config,
+                    year_figures_dir / 'py_keyword_map.png'
+                )
+                logger.info(f"Year {year}: Keyword map plot created")
+            except Exception as e:
+                logger.warning(f"Year {year}: Failed to create keyword map: {e}")
+            
+            try:
+                plot_wordcloud_python(
+                    config,
+                    year_tables_dir / 'keyword_topk.csv',
+                    exclude_keywords,
+                    year_figures_dir / config.WORDCLOUD_OUTPUT_NAME
+                )
+                logger.info(f"Year {year}: Word cloud plot created")
+            except Exception as e:
+                logger.warning(f"Year {year}: Failed to create word cloud: {e}")
+        
+        # Create R figures
+        if create_r_figures:
+            r_dir = project_root / 'r'
+            if r_dir.exists():
+                run_r_scripts(project_root, logger,
+                             tables_dir=year_tables_dir,
+                             figures_dir=year_figures_dir)
+            else:
+                logger.warning(f"R scripts directory not found: {r_dir}")
+        
+        logger.info(f"Year {year} processing completed")
 
 
 def run_pipeline(config_path: Path, input_dir: Path, output_dir: Path, 
@@ -388,6 +544,57 @@ def run_pipeline(config_path: Path, input_dir: Path, output_dir: Path,
     logger.info("=" * 60)
     logger.info("All groups processed successfully!")
     logger.info("=" * 60)
+    
+    # Create similarity analysis between groups
+    if config.DATA_SOURCE_GROUPS and isinstance(config.DATA_SOURCE_GROUPS, dict):
+        logger.info("=" * 60)
+        logger.info("Creating similarity analysis between groups...")
+        logger.info("=" * 60)
+        try:
+            # All groups comparison
+            group_names = list(config.DATA_SOURCE_GROUPS.keys())
+            create_similarity_analysis(output_dir, group_names)
+            logger.info("Similarity analysis tables created successfully")
+            
+            # Single groups only comparison (groups with only one folder)
+            single_group_names = [
+                group_name for group_name, folders in config.DATA_SOURCE_GROUPS.items()
+                if len(folders) == 1
+            ]
+            if len(single_group_names) > 1:  # Need at least 2 groups to compare
+                logger.info(f"Creating single groups comparison: {single_group_names}")
+                single_comparison_dir = output_dir / 'Comparison' / 'single_groups'
+                single_comparison_dir.mkdir(parents=True, exist_ok=True)
+                single_tables_dir = single_comparison_dir / 'tables'
+                single_tables_dir.mkdir(parents=True, exist_ok=True)
+                
+                # Create similarity analysis for single groups
+                from news_kw.similarity import create_similarity_analysis_single_groups
+                create_similarity_analysis_single_groups(output_dir, single_group_names, single_tables_dir)
+                logger.info("Single groups similarity analysis tables created successfully")
+                
+                # Run R script to generate similarity heatmaps for single groups
+                if create_r_figures:
+                    project_root = config_path.resolve().parent.parent
+                    single_figures_dir = single_comparison_dir
+                    run_r_scripts(project_root, logger,
+                                 tables_dir=single_tables_dir,
+                                 figures_dir=single_figures_dir,
+                                 r_scripts=['r/plot_similarity.R'])
+            
+            # Run R script to generate similarity heatmaps for all groups
+            if create_r_figures:
+                project_root = config_path.resolve().parent.parent
+                comparison_tables_dir = output_dir / 'Comparison' / 'tables'
+                comparison_figures_dir = output_dir / 'Comparison'
+                run_r_scripts(project_root, logger,
+                             tables_dir=comparison_tables_dir,
+                             figures_dir=comparison_figures_dir,
+                             r_scripts=['r/plot_similarity.R'])
+            logger.info("Similarity analysis completed successfully!")
+        except Exception as e:
+            logger.warning(f"Failed to create similarity analysis: {e}")
+            logger.exception(e)
 
 
 def _run_group_wrapper(group_name: str, folders: list, config_dict: dict, 

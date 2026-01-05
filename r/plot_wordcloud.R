@@ -59,6 +59,27 @@ if (!file.exists(input_file)) {
 # Read data
 keywords <- read.csv(input_file, stringsAsFactors = FALSE)
 
+# Check if data is empty
+if (nrow(keywords) == 0) {
+  warning("No data in keyword_topk.csv. Skipping plot.")
+  # Create empty figure files to indicate no data
+  empty_png <- file.path(figures_dir, "fig_wordcloud.png")
+  empty_pdf <- file.path(figures_dir, "fig_wordcloud.pdf")
+  dir.create(figures_dir, showWarnings = FALSE, recursive = TRUE)
+  # Create empty PNG
+  png(empty_png, width = wordcloud_width, height = wordcloud_height, res = 300, bg = wordcloud_background)
+  plot.new()
+  text(0.5, 0.5, "No data to plot", cex = 2, col = "gray")
+  dev.off()
+  # Create empty PDF
+  pdf(empty_pdf, width = wordcloud_width / 100, height = wordcloud_height / 100, bg = wordcloud_background)
+  plot.new()
+  text(0.5, 0.5, "No data to plot", cex = 2, col = "gray")
+  dev.off()
+  cat(paste("Empty figure files created (no data):", figures_dir, "\n"))
+  quit(status = 0)  # Exit gracefully
+}
+
 # Filter out excluded keywords (case-insensitive, same as Python)
 if (length(exclude_keywords) > 0) {
   exclude_set <- tolower(exclude_keywords)
@@ -67,6 +88,27 @@ if (length(exclude_keywords) > 0) {
 
 # Filter to top N
 keywords <- head(keywords, wordcloud_top_n)
+
+# Check if we have any keywords after filtering
+if (nrow(keywords) == 0 || all(is.na(keywords$freq)) || all(keywords$freq == 0)) {
+  warning("No valid keywords after filtering. Skipping plot.")
+  # Create empty figure files to indicate no data
+  empty_png <- file.path(figures_dir, "fig_wordcloud.png")
+  empty_pdf <- file.path(figures_dir, "fig_wordcloud.pdf")
+  dir.create(figures_dir, showWarnings = FALSE, recursive = TRUE)
+  # Create empty PNG
+  png(empty_png, width = wordcloud_width, height = wordcloud_height, res = 300, bg = wordcloud_background)
+  plot.new()
+  text(0.5, 0.5, "No data to plot", cex = 2, col = "gray")
+  dev.off()
+  # Create empty PDF
+  pdf(empty_pdf, width = wordcloud_width / 100, height = wordcloud_height / 100, bg = wordcloud_background)
+  plot.new()
+  text(0.5, 0.5, "No data to plot", cex = 2, col = "gray")
+  dev.off()
+  cat(paste("Empty figure files created (no valid data after filtering):", figures_dir, "\n"))
+  quit(status = 0)  # Exit gracefully
+}
 
 # Create frequency vector
 freq_vec <- keywords$freq

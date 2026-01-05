@@ -208,3 +208,4 @@ for(pkg in required_packages) {
 - R 패키지 검색: https://cran.r-project.org/web/packages/available_packages_by_name.html
 - 패키지 매뉴얼: https://cran.r-project.org/web/packages/
 
+

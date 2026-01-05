@@ -2,6 +2,7 @@
 
 from pathlib import Path
 import pandas as pd
+import warnings
 from collections import defaultdict
 from news_kw.config import Config
 
@@ -22,6 +23,18 @@ def calculate_cooccurrence(tokens_df: pd.DataFrame, config: Config, output_dir: 
         exclude_set = {kw.lower() for kw in exclude_keywords}
         tokens_df = tokens_df[~tokens_df['token'].str.lower().isin(exclude_set)].copy()
     
+    # Check if we have any tokens after filtering
+    if len(tokens_df) == 0:
+        warnings.warn(f"No tokens available for co-occurrence analysis in {output_dir}")
+        # Create empty files
+        nodes = pd.DataFrame(columns=['token', 'doc_freq'])
+        edges = pd.DataFrame(columns=['source', 'target', 'weight'])
+        nodes_path = output_dir / 'cooccurrence_nodes.csv'
+        edges_path = output_dir / 'cooccurrence_edges.csv'
+        nodes.to_csv(nodes_path, index=False)
+        edges.to_csv(edges_path, index=False)
+        return
+    
     # Calculate document frequency for each token
     doc_freq = tokens_df.groupby('token')['doc_id'].nunique().reset_index()
     doc_freq.columns = ['token', 'doc_freq']
@@ -31,6 +44,18 @@ def calculate_cooccurrence(tokens_df: pd.DataFrame, config: Config, output_dir: 
     if exclude_keywords:
         exclude_set = {kw.lower() for kw in exclude_keywords}
         doc_freq = doc_freq[~doc_freq['token'].str.lower().isin(exclude_set)].copy()
+    
+    # Check if we have any tokens after filtering
+    if len(doc_freq) == 0:
+        warnings.warn(f"No tokens available for co-occurrence analysis after filtering in {output_dir}")
+        # Create empty files
+        nodes = pd.DataFrame(columns=['token', 'doc_freq'])
+        edges = pd.DataFrame(columns=['source', 'target', 'weight'])
+        nodes_path = output_dir / 'cooccurrence_nodes.csv'
+        edges_path = output_dir / 'cooccurrence_edges.csv'
+        nodes.to_csv(nodes_path, index=False)
+        edges.to_csv(edges_path, index=False)
+        return
     
     # Get top N nodes by document frequency
     top_nodes = set(doc_freq.head(config.COOC_NODE_TOP_N)['token'])
@@ -58,18 +83,29 @@ def calculate_cooccurrence(tokens_df: pd.DataFrame, config: Config, output_dir: 
     ])
     
     # Get top N edges by weight
-    edges = edges.sort_values('weight', ascending=False).head(config.COOC_EDGE_TOP_N)
+    if len(edges) > 0:
+        edges = edges.sort_values('weight', ascending=False).head(config.COOC_EDGE_TOP_N)
+    else:
+        edges = pd.DataFrame(columns=['source', 'target', 'weight'])
     
     # Create nodes table (only tokens that appear in edges)
-    nodes_in_edges = set(edges['source']) | set(edges['target'])
-    nodes = doc_freq[doc_freq['token'].isin(nodes_in_edges)].copy()
-    nodes = nodes.sort_values('doc_freq', ascending=False)
+    if len(edges) > 0:
+        nodes_in_edges = set(edges['source']) | set(edges['target'])
+        nodes = doc_freq[doc_freq['token'].isin(nodes_in_edges)].copy()
+        nodes = nodes.sort_values('doc_freq', ascending=False)
+    else:
+        # No edges means no co-occurrence network
+        nodes = pd.DataFrame(columns=['token', 'doc_freq'])
+        warnings.warn(
+            f"No co-occurrence edges found for {output_dir}. "
+            f"This may happen if there are too few documents or tokens."
+        )
     
-    # Save nodes
+    # Save nodes (even if empty, so file exists for downstream processing)
     nodes_path = output_dir / 'cooccurrence_nodes.csv'
     nodes.to_csv(nodes_path, index=False)
     
-    # Save edges
+    # Save edges (even if empty, so file exists for downstream processing)
     edges_path = output_dir / 'cooccurrence_edges.csv'
     edges.to_csv(edges_path, index=False)
 

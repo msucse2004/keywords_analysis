@@ -51,10 +51,16 @@ if (file.exists(exclude_file)) {
 nodes_file <- file.path(tables_dir, "cooccurrence_nodes.csv")
 edges_file <- file.path(tables_dir, "cooccurrence_edges.csv")
 if (!file.exists(nodes_file)) {
-  stop(sprintf("Input file not found: %s\nPlease check that R_TABLES_DIR environment variable is set correctly.\nCurrent R_TABLES_DIR: %s", nodes_file, tables_dir))
+  error_msg <- paste("Input file not found:", nodes_file, 
+                     "\nPlease check that R_TABLES_DIR environment variable is set correctly.",
+                     "\nCurrent R_TABLES_DIR:", tables_dir)
+  stop(error_msg)
 }
 if (!file.exists(edges_file)) {
-  stop(sprintf("Input file not found: %s\nPlease check that R_TABLES_DIR environment variable is set correctly.\nCurrent R_TABLES_DIR: %s", edges_file, tables_dir))
+  error_msg <- paste("Input file not found:", edges_file,
+                     "\nPlease check that R_TABLES_DIR environment variable is set correctly.",
+                     "\nCurrent R_TABLES_DIR:", tables_dir)
+  stop(error_msg)
 }
 
 # Read data
@@ -123,5 +129,5 @@ ggsave(file.path(figures_dir, "fig_keyword_map.pdf"),
        device = "pdf",
        bg = "white")
 
-cat(paste("Keyword map figure saved to", figures_dir, "\n"))
+cat("Keyword map figure saved to", figures_dir, "\n")
 

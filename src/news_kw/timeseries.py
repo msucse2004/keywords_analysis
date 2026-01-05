@@ -116,6 +116,14 @@ def create_topn_by_date(timeseries_df: pd.DataFrame, config: Config, exclude_key
         top_n['rank'] = range(1, len(top_n) + 1)
         topn_by_date_list.append(top_n)
     
+    # Check if we have any data to concatenate
+    if len(topn_by_date_list) == 0:
+        # Return empty DataFrame with correct columns
+        empty_df = pd.DataFrame(columns=['date', 'rank', 'token', 'freq', 'freq_norm'])
+        output_path = output_dir / 'keyword_topn_by_date.csv'
+        empty_df.to_csv(output_path, index=False)
+        return empty_df
+    
     # Combine all dates
     topn_by_date = pd.concat(topn_by_date_list, ignore_index=True)
     

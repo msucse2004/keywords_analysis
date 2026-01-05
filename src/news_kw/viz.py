@@ -149,8 +149,22 @@ def plot_keyword_map(nodes_path: Path, edges_path: Path, config: Config, output_
         output_path: Path to save figure
     """
     try:
+        # Check if files exist
+        if not nodes_path.exists():
+            warnings.warn(f"Co-occurrence nodes file not found: {nodes_path}. Skipping plot.")
+            return
+        
+        if not edges_path.exists():
+            warnings.warn(f"Co-occurrence edges file not found: {edges_path}. Skipping plot.")
+            return
+        
         nodes_df = pd.read_csv(nodes_path)
         edges_df = pd.read_csv(edges_path)
+        
+        # Check if data is empty
+        if len(nodes_df) == 0 or len(edges_df) == 0:
+            warnings.warn(f"No co-occurrence data to plot. Nodes: {len(nodes_df)}, Edges: {len(edges_df)}. Skipping plot.")
+            return
         
         # Create graph
         G = nx.Graph()

@@ -39,6 +39,30 @@ if (!file.exists(input_file)) {
 
 # Read data (same file as Python uses)
 topn_by_date <- read.csv(input_file, stringsAsFactors = FALSE)
+
+# Check if data is empty
+if (nrow(topn_by_date) == 0) {
+  warning("No data in keyword_topn_by_date.csv. Skipping plot.")
+  # Create empty figure files to indicate no data
+  empty_png <- file.path(figures_dir, "fig_keyword_trends.png")
+  empty_pdf <- file.path(figures_dir, "fig_keyword_trends.pdf")
+  if (!dir.exists(figures_dir)) {
+    dir.create(figures_dir, recursive = TRUE)
+  }
+  # Create empty PNG (1x1 white image)
+  png(empty_png, width = 10*300, height = 6*300, res = 300, bg = "white")
+  plot.new()
+  text(0.5, 0.5, "No data to plot", cex = 2, col = "gray")
+  dev.off()
+  # Create empty PDF
+  pdf(empty_pdf, width = 10, height = 6)
+  plot.new()
+  text(0.5, 0.5, "No data to plot", cex = 2, col = "gray")
+  dev.off()
+  cat(paste("Empty figure files created (no data):", figures_dir, "\n"))
+  quit(status = 0)  # Exit gracefully
+}
+
 topn_by_date$date <- as.Date(topn_by_date$date)
 
 # Filter to Top N ranks (same as Python - all ranks from 1 to TREND_PLOT_TOP_N)
@@ -47,7 +71,25 @@ plot_data <- topn_by_date %>%
   arrange(date, rank)
 
 if (nrow(plot_data) == 0) {
-  stop("No data points to plot")
+  warning("No data points after filtering. Skipping plot.")
+  # Create empty figure files to indicate no data
+  empty_png <- file.path(figures_dir, "fig_keyword_trends.png")
+  empty_pdf <- file.path(figures_dir, "fig_keyword_trends.pdf")
+  if (!dir.exists(figures_dir)) {
+    dir.create(figures_dir, recursive = TRUE)
+  }
+  # Create empty PNG (1x1 white image)
+  png(empty_png, width = 10*300, height = 6*300, res = 300, bg = "white")
+  plot.new()
+  text(0.5, 0.5, "No data to plot", cex = 2, col = "gray")
+  dev.off()
+  # Create empty PDF
+  pdf(empty_pdf, width = 10, height = 6)
+  plot.new()
+  text(0.5, 0.5, "No data to plot", cex = 2, col = "gray")
+  dev.off()
+  cat(paste("Empty figure files created (no data after filtering):", figures_dir, "\n"))
+  quit(status = 0)  # Exit gracefully
 }
 
 # Define colors for each rank (using viridis-like colors, same as Python)

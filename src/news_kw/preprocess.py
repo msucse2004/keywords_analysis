@@ -134,6 +134,7 @@ def tokenize_documents(df: pd.DataFrame, output_dir: Path) -> pd.DataFrame:
         # Parallel processing for large document sets
         # Prepare data for parallel processing
         doc_tuples = [(row['doc_id'], row['date'], row['text']) for _, row in df.iterrows()]
+        all_doc_ids = {doc_tuple[0] for doc_tuple in doc_tuples}  # Track all document IDs
         processed_docs = set()
         failed_docs = []
         
@@ -146,6 +147,7 @@ def tokenize_documents(df: pd.DataFrame, output_dir: Path) -> pd.DataFrame:
                 doc_id = doc_tuple[0]
                 try:
                     result = future.result()
+                    # Add to processed even if result is empty (document had no tokens)
                     tokens_list.extend(result)
                     processed_docs.add(doc_id)
                 except Exception as e:
@@ -157,9 +159,12 @@ def tokenize_documents(df: pd.DataFrame, output_dir: Path) -> pd.DataFrame:
         total_processed = len(processed_docs) + len(failed_docs)
         if total_processed != num_docs:
             missing_count = num_docs - total_processed
+            missing_doc_ids = all_doc_ids - processed_docs - {doc_id for doc_id, _ in failed_docs}
+            missing_info = f"누락된 문서 ID: {list(missing_doc_ids)[:5]}" if missing_doc_ids else "누락된 문서 ID 없음"
             warnings.warn(
                 f"문서 토큰화 누락 경고: {missing_count}개 문서가 처리되지 않았습니다. "
-                f"(전체: {num_docs}, 처리됨: {len(processed_docs)}, 실패: {len(failed_docs)})"
+                f"(전체: {num_docs}, 처리됨: {len(processed_docs)}, 실패: {len(failed_docs)}). "
+                f"{missing_info}"
             )
         
         # Log detailed statistics
